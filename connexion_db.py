@@ -1,17 +1,23 @@
-from flask import Flask, request, render_template, redirect, url_for, abort, flash, session, g
+import os
 
+from flask import Flask, request, render_template, redirect, url_for, abort, flash, session, g
+from dotenv import load_dotenv
 import pymysql.cursors
 
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        #
+        load_dotenv()
+        DATABASE_HOST = os.getenv("DATABASE_HOST")
+        DATABASE_USER = os.getenv("DATABASE_USER")
+        DATABASE_PWD = os.getenv("DATABASE_PWD")
+        DATABASE_NAME = os.getenv("DATABASE_NAME")
         db = g._database = pymysql.connect(
-            host="quentinpayet.mysql.pythonanywhere-services.com",
+            host=DATABASE_HOST,
             # host="serveurmysql",
-            user="quentinpayet",
-            password="azerty97480",
-            database="quentinpayet$sae345",
+            user=DATABASE_USER,
+            password=DATABASE_PWD,
+            database=DATABASE_NAME,
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
