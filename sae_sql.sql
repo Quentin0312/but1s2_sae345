@@ -1,4 +1,8 @@
 DROP TABLE IF EXISTS utilisateur;
+DROP TABLE IF EXISTS commande;
+DROP TABLE IF EXISTS ligne_commande;
+DROP TABLE IF EXISTS ligne_panier;
+DROP TABLE IF EXISTS etat;
 DROP TABLE IF EXISTS meuble;
 DROP TABLE IF EXISTS materiau;
 DROP TABLE IF EXISTS type_meuble;
@@ -26,8 +30,27 @@ INSERT INTO utilisateur(id_utilisateur,login,email,password,role,nom,est_actif) 
     'ROLE_client','client2','1');
 
 SELECT * FROM utilisateur;
-
 SHOW TABLES;
+
+
+CREATE TABLE etat
+(
+    id_etat INT AUTO_INCREMENT,
+    libelle_etat VARCHAR(255),
+    PRIMARY KEY (id_etat)
+);
+
+CREATE TABLE commande
+(
+    id_commande INT AUTO_INCREMENT,
+    date_achat DATE,
+    prix_total_commande NUMERIC(7,2),
+    utilisateur_id INT,
+    etat_id INT,
+    PRIMARY KEY (id_commande),
+    CONSTRAINT fk_commande_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur),
+    CONSTRAINT fk_commande_etat FOREIGN KEY (etat_id) REFERENCES etat (id_etat)
+);
 
 CREATE TABLE materiau
 (
@@ -35,6 +58,7 @@ CREATE TABLE materiau
     libelle_materiau VARCHAR(255),
     PRIMARY KEY (id_materiau)
 );
+
 
 CREATE TABLE type_meuble
 (
@@ -57,6 +81,26 @@ CREATE TABLE meuble
     PRIMARY KEY (id_meuble),
     CONSTRAINT fk_meuble_materiau FOREIGN KEY (materiau_id) REFERENCES materiau (id_materiau),
     CONSTRAINT fk_meuble_type_meuble FOREIGN KEY (type_meuble_id) REFERENCES type_meuble (id_type)
+);
+
+CREATE TABLE ligne_commande
+(
+    commande_id INT,
+    meuble_id INT,
+    prix NUMERIC(7,2),
+    quantite INT,
+    CONSTRAINT fk_lignecommande_commande FOREIGN KEY (commande_id) REFERENCES commande (id_commande),
+    CONSTRAINT fk_lignecommande_meuble FOREIGN KEY (meuble_id) REFERENCES meuble (id_meuble)
+);
+
+CREATE TABLE ligne_panier
+(
+    utilisateur_id INT,
+    meuble_id INT,
+    quantite_panier INT,
+    date_ajout_panier DATE,
+    CONSTRAINT fk_lignepanier_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur),
+    CONSTRAINT fk_lignepanier_meuble FOREIGN KEY (meuble_id) REFERENCES meuble (id_meuble)
 );
 
 
@@ -87,7 +131,7 @@ VALUES (NULL,'ÖSTANÖ',39,75,20.99,3,1,'Maison du meuble','Miliboo'),
        (NULL,'UTESPELARE', 160, 66.78, 199, 3, 4, 'NV Gallery', 'Miliboo'),
        (NULL,'KALLAX', 111, 77, 49.99, 2, 4, 'Mobilier Éco', 'Tikamoon'),
        (NULL,'MITTZON ', 120, 65, 219, 1, 4, 'IKEA', 'Kave Home'), #HAUTEUR => 65-85cm
-                                                                                  (NULL,'MALM', 120.3, 77.4, 129, 2, 4, 'NV Gallery', 'Tikamoon'),
+       (NULL,'MALM', 120.3, 77.4, 129, 2, 4, 'NV Gallery', 'Tikamoon'),
        (NULL,'UTVISNING', 120, 78, 159, 3, 4, 'Maison du meuble', 'Kave Home'), #plataeu hauteur+12cm
        (NULL,'KLEPPSTAD', 79, 176, 99.99, 1, 5, 'IKEA', 'Miliboo'),
        (NULL,'BRIMNES', 117.1, 190.5, 179, 1, 5, 'Mobilier Éco', 'Bobochic'),
