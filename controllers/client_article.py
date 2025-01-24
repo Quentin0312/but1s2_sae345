@@ -19,11 +19,25 @@ def client_article_show():                                 # remplace client_ind
     condition_and = ""
     # utilisation du filtre
     sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
-    articles =[]
+    sql = '''SELECT id_meuble AS id_article,
+            nom_meuble AS nom,
+            prix_meuble AS prix,
+            stock AS stock,
+            image AS image
+            FROM meuble
+            ORDER BY nom;'''
+    mycursor.execute(sql)
+    articles = mycursor.fetchall()
 
 
     # pour le filtre
-    types_article = []
+    sql = '''
+            SELECT id_type AS id_type_article,
+                libelle_type AS libelle
+                FROM type_meuble
+                ORDER BY libelle;'''
+    mycursor.execute(sql)
+    types_article = mycursor.fetchall()
 
 
     articles_panier = []
