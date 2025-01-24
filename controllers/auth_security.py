@@ -66,6 +66,7 @@ def auth_signup_post():
         return redirect('/signup')
 
     # ajouter un nouveau user
+    # TODO : 'pbkdf2:sha256' ?
     password = generate_password_hash(password, method='pbkdf2')
     tuple_insert = (login, email, password, 'ROLE_client')
     # sql = """  requete_auth_security_3  """
