@@ -1,11 +1,11 @@
-DROP TABLE IF EXISTS utilisateur;
-DROP TABLE IF EXISTS commande;
 DROP TABLE IF EXISTS ligne_commande;
 DROP TABLE IF EXISTS ligne_panier;
-DROP TABLE IF EXISTS etat;
 DROP TABLE IF EXISTS meuble;
-DROP TABLE IF EXISTS materiau;
 DROP TABLE IF EXISTS type_meuble;
+DROP TABLE IF EXISTS materiau;
+DROP TABLE IF EXISTS commande;
+DROP TABLE IF EXISTS etat;
+DROP TABLE IF EXISTS utilisateur;
 
 CREATE TABLE utilisateur
 (
@@ -29,10 +29,6 @@ VALUES (1, 'admin', 'admin@admin.fr',
        (3, 'client2', 'client2@client2.fr',
         'pbkdf2:sha256:1000000$qDAkJlUehmaARP1S$39044e949f63765b785007523adcde3d2ad9c2283d71e3ce5ffe58cbf8d86080',
         'ROLE_client', 'client2', '1');
-
-SELECT *
-FROM utilisateur;
-SHOW TABLES;
 
 
 CREATE TABLE etat
