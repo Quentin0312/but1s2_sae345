@@ -18,9 +18,9 @@ def client_article_show():                                 # remplace client_ind
     condition_and = ""
     # utilisation du filtre
     sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
-    sql = '''SELECT id_meuble AS id_article,
-            nom_meuble AS nom,
-            prix_meuble AS prix,
+    sql = '''SELECT id_article,
+            nom,
+            prix,
             stock AS stock,
             image AS image
             FROM meuble'''
@@ -35,7 +35,7 @@ def client_article_show():                                 # remplace client_ind
                 sql += ' WHERE ('
             else:
                 sql += ' AND ('
-            filter_word_sql = "meuble.nom_meuble LIKE %s"
+            filter_word_sql = "meuble.nom LIKE %s"
             sql += filter_word_sql
             list_param.append("%" + filter_word + "%")
             sql += ' ) '
@@ -53,7 +53,7 @@ def client_article_show():                                 # remplace client_ind
                 else:
                     sql += ' AND ('
 
-                sql += "meuble.prix_meuble BETWEEN %s AND %s ) "
+                sql += "meuble.prix BETWEEN %s AND %s ) "
 
                 list_param.append(min)
                 list_param.append(max)
