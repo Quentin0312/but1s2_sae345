@@ -97,8 +97,8 @@ CREATE TABLE ligne_panier
 (
     utilisateur_id    INT,
     meuble_id         INT,
-    quantite_panier   INT,
-    date_ajout_panier DATE,
+    quantite   INT,
+    date_ajout DATE,
     CONSTRAINT fk_lignepanier_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur),
     CONSTRAINT fk_lignepanier_meuble FOREIGN KEY (meuble_id) REFERENCES meuble (id_meuble)
 );

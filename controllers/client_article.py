@@ -39,17 +39,25 @@ def client_article_show():                                 # remplace client_ind
     mycursor.execute(sql)
     types_article = mycursor.fetchall()
 
-
-    articles_panier = []
+    sql = ''' SELECT * FROM ligne_panier; '''
+    mycursor.execute(sql)
+    articles_panier = mycursor.fetchall()
 
     if len(articles_panier) >= 1:
-        sql = ''' calcul du prix total du panier '''
-        prix_total = None
+        sql = '''SELECT * , meuble.prix_meuble as prix , meuble.nom_meuble as nom 
+        FROM ligne_panier
+        JOIN meuble ON meuble_id = meuble.id_meuble;'''
+        mycursor.execute(sql)
+        articles_panier = mycursor.fetchall()
+        sql = ''' SELECT SUM(meuble.prix_meuble * ligne_panier.quantite) as prixTotal FROM ligne_panier JOIN meuble ON meuble_id = meuble.id_meuble; '''
+        mycursor.execute(sql)
+        prix_total = mycursor.fetchone()
+        prix_total = prix_total['prixTotal']# requete à faire
     else:
         prix_total = None
     return render_template('client/boutique/panier_article.html'
                            , articles=articles
                            , articles_panier=articles_panier
-                           #, prix_total=prix_total
+                           , prix_total=prix_total
                            , items_filtre=types_article
                            )
