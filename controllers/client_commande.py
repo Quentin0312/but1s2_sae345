@@ -39,22 +39,37 @@ def client_commande_add():
     # choix de(s) (l')adresse(s)
 
     id_client = session['id_user']
-    sql = ''' selection du contenu du panier de l'utilisateur '''
-    items_ligne_panier = []
-    # if items_ligne_panier is None or len(items_ligne_panier) < 1:
-    #     flash(u'Pas d\'articles dans le ligne_panier', 'alert-warning')
-    #     return redirect('/client/article/show')
+
+    sql = ''' SELECT * FROM ligne_panier WHERE utilisateur_id=%s '''
+    mycursor.execute(sql, id_client)
+    items_ligne_panier = mycursor.fetchall()
+    if items_ligne_panier is None or len(items_ligne_panier) < 1:
+        flash(u'Pas d\'articles dans le ligne_panier', 'alert-warning')
+        return redirect('/client/article/show')
                                            # https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
     #a = datetime.strptime('my date', "%b %d %Y %H:%M")
-
-    sql = ''' creation de la commande '''
+    date_commande = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    tuple_insert = (date_commande, id_client, '1')      # 1 : etat de commande : "en cours" ou "validé"
+    sql = ''' INSERT INTO commande(date_achat, utilisateur_id, etat_id) VALUES (%s,%s,%s) '''
+    mycursor.execute(sql, tuple_insert)
 
     sql = '''SELECT last_insert_id() as last_insert_id'''
+    mycursor.execute(sql)
+    commande_id = mycursor.fetchone
+    print(commande_id, tuple_insert)
     # numéro de la dernière commande
     for item in items_ligne_panier:
-        sql = ''' suppression d'une ligne de panier '''
-        sql = "  ajout d'une ligne de commande'"
+        sql = ''' DELETE FROM ligne_panier WHERE utilisateur_id = %s AND meuble_id = %s '''
+        mycursor.execute(sql, (item['utilisateur_id'], item['meuble_id']))
+        sql = ''' SELECT 1 AS prix FROM meuble WHERE id_meuble = %s '''
+        mycursor.execute(sql, (item['meuble_id']))
+        prix = mycursor.fetchone()
+        print(prix)
 
+        sql = ''' INSERT INTO ligne_commande(commande_id, meuble_id, prix, quantite) VALUES (%s,%s,%s,%s) '''
+        tuple_insert = (commande_id['last_insert_id'], item['meuble_id'], prix['prix'], item['quantite'])
+        print(tuple_insert)
+        mycursor.execute(sql, tuple_insert)
     get_db().commit()
     flash(u'Commande ajoutée','alert-success')
     return redirect('/client/article/show')

@@ -33,18 +33,19 @@ VALUES (1, 'admin', 'admin@admin.fr',
 
 CREATE TABLE etat
 (
-    id_etat      INT AUTO_INCREMENT,
+    id_etat      INT NOT NULL AUTO_INCREMENT,
     libelle_etat VARCHAR(255),
     PRIMARY KEY (id_etat)
 );
+INSERT INTO etat(libelle_etat) VALUES ('en cours de traitement'), ('expédié'), ('validé');
 
 CREATE TABLE commande
 (
-    id_commande         INT AUTO_INCREMENT,
-    date_achat          DATE,
+    id_commande         INT NOT NULL AUTO_INCREMENT,
+    date_achat          DATETIME,
+    utilisateur_id      INT NOT NULL,
+    etat_id             INT NOT NULL,
     prix_total_commande NUMERIC(7, 2),
-    utilisateur_id      INT,
-    etat_id             INT,
     PRIMARY KEY (id_commande),
     CONSTRAINT fk_commande_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur),
     CONSTRAINT fk_commande_etat FOREIGN KEY (etat_id) REFERENCES etat (id_etat)
@@ -52,7 +53,7 @@ CREATE TABLE commande
 
 CREATE TABLE materiau
 (
-    id_materiau      INT AUTO_INCREMENT,
+    id_materiau      INT NOT NULL AUTO_INCREMENT,
     libelle_materiau VARCHAR(255),
     PRIMARY KEY (id_materiau)
 );
@@ -60,20 +61,20 @@ CREATE TABLE materiau
 
 CREATE TABLE type_meuble
 (
-    id_type      INT AUTO_INCREMENT,
+    id_type      INT NOT NULL AUTO_INCREMENT,
     libelle_type VARCHAR(255),
     PRIMARY KEY (id_type)
 );
 
 CREATE TABLE meuble
 (
-    id_meuble      INT AUTO_INCREMENT,
+    id_meuble      INT NOT NULL AUTO_INCREMENT,
     nom_meuble     VARCHAR(255),
     largeur        NUMERIC(7, 2),
     hauteur        NUMERIC(7, 2),
     prix_meuble    NUMERIC(7, 2),
-    materiau_id    INT,
-    type_meuble_id INT,
+    materiau_id    INT NOT NULL,
+    type_meuble_id INT NOT NULL,
     fournisseur    VARCHAR(255),
     marque         VARCHAR(255),
     stock          INT,
