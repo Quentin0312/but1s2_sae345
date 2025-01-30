@@ -100,6 +100,8 @@ def client_panier_delete():
         print('else done')
 
     # mise à jour du stock de l'article disponible
+    sql = "UPDATE meuble SET stock = stock+1 WHERE id_article=%s"
+    mycursor.execute(sql, (id_article))
     get_db().commit()
     return redirect('/client/article/show')
 
