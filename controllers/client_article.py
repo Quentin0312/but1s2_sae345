@@ -19,11 +19,11 @@ def client_article_show():                                 # remplace client_ind
     condition_and = ""
     # utilisation du filtre
     sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
-    sql = '''SELECT id_meuble AS id_article,
-            nom_meuble AS nom,
-            prix_meuble AS prix,
-            stock AS stock,
-            image AS image
+    sql = '''SELECT id_article,
+            nom,
+            prix,
+            stock,
+            image
             FROM meuble
             ORDER BY nom;'''
     mycursor.execute(sql)
@@ -39,22 +39,24 @@ def client_article_show():                                 # remplace client_ind
     mycursor.execute(sql)
     types_article = mycursor.fetchall()
 
-    sql = ''' SELECT * FROM ligne_panier; '''
-    mycursor.execute(sql)
+    sql = ''' SELECT * FROM ligne_panier WHERE utilisateur_id=%s; '''
+    mycursor.execute(sql, (id_client))
     articles_panier = mycursor.fetchall()
 
+    print("==============", articles_panier)
+
     if len(articles_panier) >= 1:
-        sql = '''SELECT * , meuble.prix_meuble as prix , meuble.nom_meuble as nom 
-        FROM ligne_panier
-        JOIN meuble ON meuble_id = meuble.id_meuble;'''
-        mycursor.execute(sql)
+        sql = '''SELECT * , meuble.prix , meuble.nom 
+        FROM ligne_panier JOIN meuble ON article_id = meuble.id_article WHERE utilisateur_id=%s;'''
+        mycursor.execute(sql, (id_client))
         articles_panier = mycursor.fetchall()
-        sql = ''' SELECT SUM(meuble.prix_meuble * ligne_panier.quantite) as prixTotal FROM ligne_panier JOIN meuble ON meuble_id = meuble.id_meuble; '''
-        mycursor.execute(sql)
+        sql = ''' SELECT SUM(meuble.prix * ligne_panier.quantite) as prixTotal FROM ligne_panier 
+        JOIN meuble ON article_id = meuble.id_article WHERE utilisateur_id=%s; '''
+        mycursor.execute(sql, (id_client))
         prix_total = mycursor.fetchone()
         prix_total = prix_total['prixTotal']# requete à faire
     else:
-        prix_total = None
+        prix_total = 0
     return render_template('client/boutique/panier_article.html'
                            , articles=articles
                            , articles_panier=articles_panier

@@ -68,18 +68,18 @@ CREATE TABLE type_meuble
 
 CREATE TABLE meuble
 (
-    id_meuble      INT NOT NULL AUTO_INCREMENT,
-    nom_meuble     VARCHAR(255),
+    id_article      INT NOT NULL AUTO_INCREMENT,
+    nom     VARCHAR(255),
     largeur        NUMERIC(7, 2),
     hauteur        NUMERIC(7, 2),
-    prix_meuble    NUMERIC(7, 2),
+    prix    NUMERIC(7, 2),
     materiau_id    INT NOT NULL,
     type_meuble_id INT NOT NULL,
     fournisseur    VARCHAR(255),
     marque         VARCHAR(255),
     stock          INT,
     image          VARCHAR(255),
-    PRIMARY KEY (id_meuble),
+    PRIMARY KEY (id_article),
     CONSTRAINT fk_meuble_materiau FOREIGN KEY (materiau_id) REFERENCES materiau (id_materiau),
     CONSTRAINT fk_meuble_type_meuble FOREIGN KEY (type_meuble_id) REFERENCES type_meuble (id_type)
 );
@@ -87,21 +87,21 @@ CREATE TABLE meuble
 CREATE TABLE ligne_commande
 (
     commande_id INT,
-    meuble_id   INT,
+    article_id   INT,
     prix        NUMERIC(7, 2),
     quantite    INT,
     CONSTRAINT fk_lignecommande_commande FOREIGN KEY (commande_id) REFERENCES commande (id_commande),
-    CONSTRAINT fk_lignecommande_meuble FOREIGN KEY (meuble_id) REFERENCES meuble (id_meuble)
+    CONSTRAINT fk_lignecommande_meuble FOREIGN KEY (article_id) REFERENCES meuble (id_article)
 );
 
 CREATE TABLE ligne_panier
 (
     utilisateur_id    INT,
-    meuble_id         INT,
+    article_id         INT,
     quantite   INT,
     date_ajout DATE,
     CONSTRAINT fk_lignepanier_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur),
-    CONSTRAINT fk_lignepanier_meuble FOREIGN KEY (meuble_id) REFERENCES meuble (id_meuble)
+    CONSTRAINT fk_lignepanier_meuble FOREIGN KEY (article_id) REFERENCES meuble (id_article)
 );
 
 

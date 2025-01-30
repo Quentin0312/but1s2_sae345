@@ -14,9 +14,9 @@ client_commande = Blueprint('client_commande', __name__,
 def client_commande_valide():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    sql = ''' selection des articles d'un panier 
-    '''
-    articles_panier = []
+    sql = '''SELECT * FROM ligne_panier WHERE utilisateur_id=%s;'''
+    mycursor.execute(sql, id_client)
+    articles_panier = mycursor.fetchall()
     if len(articles_panier) >= 1:
         sql = ''' calcul du prix total du panier '''
         prix_total = None

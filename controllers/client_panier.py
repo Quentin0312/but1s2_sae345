@@ -37,14 +37,14 @@ def client_panier_add():
     #                                , article=article)
 
     # ajout dans le panier d'un article
-    sql = "SELECT * FROM ligne_panier WHERE meuble_id = %s AND utilisateur_id=%s"
+    sql = "SELECT * FROM ligne_panier WHERE article_id = %s AND utilisateur_id=%s"
     mycursor.execute(sql, (id_article, id_client))
     article_panier = mycursor.fetchone()
 
-    mycursor.execute("SELECT * FROM meuble WHERE id_meuble = %s", (id_article))
+    mycursor.execute("SELECT * FROM meuble WHERE id_article = %s", (id_article))
     article = mycursor.fetchone()
 
-    mycursor.execute("SELECT stock FROM meuble WHERE id_meuble = %s", (id_article))
+    mycursor.execute("SELECT stock FROM meuble WHERE id_article = %s", (id_article))
     article_stock = mycursor.fetchone()
 
     # recherche du stock de l'article
@@ -52,16 +52,16 @@ def client_panier_add():
         # code ci dessus
 
         tuple_update = (quantite, id_article)
-        sql = "UPDATE meuble SET stock = stock-%s WHERE  id_meuble=%s"
+        sql = "UPDATE meuble SET stock = stock-%s WHERE  id_article=%s"
         mycursor.execute(sql, tuple_update)
 
         if not (article_panier is None) and article_panier['quantite'] >= 1:
             tuple_update = (quantite, id_client, id_article)
-            sql = "UPDATE ligne_panier SET quantite = quantite+%s WHERE utilisateur_id = %s AND meuble_id=%s"
+            sql = "UPDATE ligne_panier SET quantite = quantite+%s WHERE utilisateur_id = %s AND article_id=%s"
             mycursor.execute(sql, tuple_update)
         else:
             tuple_insert = (id_client, id_article, quantite)
-            sql = "INSERT INTO ligne_panier(utilisateur_id,meuble_id,quantite, date_ajout) VALUES (%s,%s,%s, current_timestamp )"
+            sql = "INSERT INTO ligne_panier(utilisateur_id,article_id,quantite, date_ajout) VALUES (%s,%s,%s, current_timestamp )"
             mycursor.execute(sql, tuple_insert)
 
 
@@ -78,8 +78,8 @@ def client_panier_add():
 def client_panier_delete():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    id_article = request.form.get('id_article', '')
-    quantite = 1
+    id_article = request.form.get('id_article')
+    quantite = request.form.get('quantite')
 
     # ---------
     # partie 2 : on supprime une déclinaison de l'article
@@ -87,16 +87,16 @@ def client_panier_delete():
 
     print('supprime client ', id_client, 'article', id_article, 'quantite :', quantite)
 
-    sql = ''' SELECT * FROM ligne_panier WHERE utilisateur_id = %s AND meuble_id = %s '''
+    sql = ''' SELECT * FROM ligne_panier WHERE utilisateur_id = %s AND article_id = %s '''
     mycursor.execute(sql, (id_client, id_article))
     article_panier = mycursor.fetchone()
 
     if not (article_panier is None) and article_panier['quantite'] > 1:
-        sql = ''' UPDATE ligne_panier SET quantite = quantite-%s WHERE utilisateur_id = %s AND meuble_id=%s '''
+        sql = ''' UPDATE ligne_panier SET quantite = quantite-%s WHERE utilisateur_id = %s AND article_id=%s '''
         mycursor.execute(sql, (quantite, id_client, id_article))
         print('if not done')
     else:
-        sql = ''' DELETE FROM ligne_panier WHERE utilisateur_id = %s AND meuble_id=%s '''
+        sql = ''' DELETE FROM ligne_panier WHERE utilisateur_id = %s AND article_id=%s '''
         mycursor.execute(sql, (id_client, id_article))
         print('else done')
 
@@ -147,6 +147,6 @@ def client_panier_filtre():
 
 @client_panier.route('/client/panier/filtre/suppr', methods=['POST'])
 def client_panier_filtre_suppr():
-    # suppression  des variables en session
+    # suppression des variables en session
     print("suppr filtre")
     return redirect('/client/article/show')
