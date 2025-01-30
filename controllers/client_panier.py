@@ -79,21 +79,20 @@ def client_panier_delete():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     id_article = request.form.get('id_article')
-    quantite = request.form.get('quantite')
 
     # ---------
     # partie 2 : on supprime une déclinaison de l'article
     # id_declinaison_article = request.form.get('id_declinaison_article', None)
 
-    print('supprime client ', id_client, 'article', id_article, 'quantite :', quantite)
+    print('supprime client ', id_client, 'article', id_article)
 
     sql = ''' SELECT * FROM ligne_panier WHERE utilisateur_id = %s AND article_id = %s '''
     mycursor.execute(sql, (id_client, id_article))
     article_panier = mycursor.fetchone()
 
     if not (article_panier is None) and article_panier['quantite'] > 1:
-        sql = ''' UPDATE ligne_panier SET quantite = quantite-%s WHERE utilisateur_id = %s AND article_id=%s '''
-        mycursor.execute(sql, (quantite, id_client, id_article))
+        sql = ''' UPDATE ligne_panier SET quantite = quantite-1 WHERE utilisateur_id = %s AND article_id=%s '''
+        mycursor.execute(sql, (id_client, id_article))
         print('if not done')
     else:
         sql = ''' DELETE FROM ligne_panier WHERE utilisateur_id = %s AND article_id=%s '''
