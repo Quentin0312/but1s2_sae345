@@ -15,18 +15,81 @@ def client_article_show():                                 # remplace client_ind
     id_client = session['id_user']
 
     sql = '''   selection des articles   '''
-    list_param = []
     condition_and = ""
     # utilisation du filtre
     sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
-    sql = '''SELECT id_article,
-            nom,
-            prix,
-            stock,
-            image
-            FROM meuble
-            ORDER BY nom;'''
-    mycursor.execute(sql)
+    sql = '''SELECT id_meuble AS id_article,
+            nom_meuble AS nom,
+            prix_meuble AS prix,
+            stock AS stock,
+            image AS image
+            FROM meuble'''
+
+    list_param = []
+
+    # Filtre mot
+    filter_word = session.get('filter_word')
+    if filter_word is not None and filter_word != "":
+        if filter_word and filter_word != "":
+            if sql.find("WHERE") == -1:
+                sql += ' WHERE ('
+            else:
+                sql += ' AND ('
+            filter_word_sql = "meuble.nom_meuble LIKE %s"
+            sql += filter_word_sql
+            list_param.append("%" + filter_word + "%")
+            sql += ' ) '
+    # Filtre prix
+    filter_price_min = session.get('filter_price_min')
+    filter_price_max = session.get('filter_price_max')
+    min = str(filter_price_min).replace(' ', '').replace(',', '.')
+    max = str(filter_price_max).replace(' ', '').replace(',', '.')
+
+    if filter_price_min or filter_price_max:
+        if min.replace('.', '', 1).isdigit() and max.replace('.', '', 1).isdigit():
+            if float(min) < float(max):
+                if sql.find("WHERE") == -1:
+                    sql += ' WHERE ('
+                else:
+                    sql += ' AND ('
+
+                sql += "meuble.prix_meuble BETWEEN %s AND %s ) "
+
+                list_param.append(min)
+                list_param.append(max)
+            else:
+                message = u'filtre sur le prix : prix min doit être inférieur au prix max'
+                flash(message, 'alert-danger')
+        else:
+            message = u'filtre sur le prix : min et max doivent être des numériques'
+            flash(message, 'alert-danger')
+
+    # Filtre type
+    filter_types = session.get('filter_types')
+    if filter_types and filter_types != []:
+
+        if sql.find("WHERE") == -1:
+            sql += ' WHERE ('
+        else:
+            sql += ' AND ('
+
+        first_done = False
+        for type in filter_types:
+
+            if first_done:
+                sql += ' OR '
+            filter_type_sql = "meuble.type_meuble_id = %s"
+            sql += filter_type_sql
+            first_done = True
+            list_param.append(type)
+        sql += ' ) '
+
+    # Requete SQL
+    sql += " ORDER BY nom;"
+    if len(list_param) == 0:
+        mycursor.execute(sql)
+    else:
+        mycursor.execute(sql, tuple(list_param))
     articles = mycursor.fetchall()
 
 

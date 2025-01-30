@@ -142,9 +142,36 @@ def client_panier_delete_line():
 @client_panier.route('/client/panier/filtre', methods=['POST'])
 def client_panier_filtre():
     filter_word = request.form.get('filter_word', None)
-    filter_prix_min = request.form.get('filter_prix_min', None)
-    filter_prix_max = request.form.get('filter_prix_max', None)
-    filter_types = request.form.getlist('filter_types', None)
+    if filter_word is not None:
+        session['filter_word'] = filter_word
+    elif session.get('filter_word') is not None:
+        filter_word = session.get('filter_word')
+    else:
+        session['filter_word'] = ""
+
+    filter_price_min = request.form.get('filter_price_min', None)
+    if filter_price_min is not None:
+        session['filter_price_min'] = filter_price_min
+    elif session.get('filter_price_min') is not None:
+        filter_price_min = session.get('filter_price_min')
+    else:
+        session['filter_price_min'] = ""
+
+    filter_price_max = request.form.get('filter_price_max', None)
+    if filter_price_max is not None:
+        session['filter_price_max'] = filter_price_max
+    elif session.get('filter_price_max') is not None:
+        filter_price_max = session.get('filter_price_max')
+    else:
+        session['filter_price_max'] = ""
+
+    filter_types = request.form.getlist('filter_types', str)
+    if len(filter_types) > 0:
+        session['filter_types'] = filter_types
+    elif session.get('filter_types') is not None:
+        pass
+    else:
+        session['filter_types'] = []
     # test des variables puis
     # mise en session des variables
     return redirect('/client/article/show')
@@ -152,6 +179,9 @@ def client_panier_filtre():
 
 @client_panier.route('/client/panier/filtre/suppr', methods=['POST'])
 def client_panier_filtre_suppr():
-    # suppression des variables en session
-    print("suppr filtre")
+    # suppression  des variables en session
+    session.pop('filter_types') if session.get('filter_types') is not None else None
+    session.pop('filter_word') if session.get('filter_word') is not None else None
+    session.pop('filter_price_min') if session.get('filter_price_min') is not None else None
+    session.pop('filter_price_max') if session.get('filter_price_max') is not None else None
     return redirect('/client/article/show')
