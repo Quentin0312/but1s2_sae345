@@ -59,13 +59,12 @@ def client_commande_add():
     print(commande_id, tuple_insert)
     # numéro de la dernière commande
     for item in items_ligne_panier:
+        tuple_insert = (id_client, item['meuble_id'])
         sql = ''' DELETE FROM ligne_panier WHERE utilisateur_id = %s AND meuble_id = %s '''
-        mycursor.execute(sql, (item['utilisateur_id'], item['meuble_id']))
-        sql = ''' SELECT 1 AS prix FROM meuble WHERE id_meuble = %s '''
+        mycursor.execute(sql, tuple_insert)
+        sql = ''' SELECT prix_meuble AS prix FROM meuble WHERE id_meuble = %s '''
         mycursor.execute(sql, (item['meuble_id']))
         prix = mycursor.fetchone()
-        print(prix)
-
         sql = ''' INSERT INTO ligne_commande(commande_id, meuble_id, prix, quantite) VALUES (%s,%s,%s,%s) '''
         tuple_insert = (commande_id['last_insert_id'], item['meuble_id'], prix['prix'], item['quantite'])
         print(tuple_insert)
