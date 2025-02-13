@@ -138,3 +138,21 @@ VALUES (NULL, 'ÖSTANÖ', 39, 75, 20.99, 3, 1, 'Maison du meuble', 'Miliboo', 45
        (NULL, 'BRIMNES', 117.1, 190.5, 179, 1, 5, 'Mobilier Éco', 'Bobochic', 48, 'brimnes-armoire.png'),
        (NULL, 'PLATSA', 160, 181, 262, 2, 5, 'Maison du meuble', 'Tikamoon', 85, 'platsa-armoire.png'),
        (NULL, 'RAKKESTAD', 117.3, 175.7, 179, 2, 5, 'NV Gallery', 'Kave Home', 60, 'rakkestad-armoire.png');
+
+DELETE FROM ligne_commande;
+DELETE FROM commande;
+
+INSERT INTO commande (id_commande,date_achat, utilisateur_id, etat_id, prix_total_commande)
+VALUES (1,'2024-11-16 14:45:22', 2, 2, 956.99);
+
+INSERT INTO ligne_commande
+VALUES (1, 3,89.99, 1),
+       (1, 4, 289.00, 3);
+
+INSERT INTO commande (id_commande,date_achat, utilisateur_id, etat_id, prix_total_commande)
+VALUES (2,'2025-02-01 09:21:52', 2, 1, 378.99);
+
+INSERT INTO ligne_commande
+VALUES (2, 11, 277.99, 1),
+       (2, 2, 20.99, 6);
+
