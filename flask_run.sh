@@ -47,6 +47,6 @@
 #python app.py
 style_check="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 bash "${style_check}/static/assets/css/style.sh" &> /dev/null&
-killall python3
+killall python python3
 flask --debug  --app app  run   --host 0.0.0.0  &
 firefox 127.0.0.1:5000 &
