@@ -117,7 +117,13 @@ ORDER BY etat_id, date_achat;'''
     id_commande = request.args.get('id_commande', None)
     if id_commande != None:
         print(id_commande)
-        sql = ''' selection du détails d'une commande '''
+        sql = ''' SELECT meuble.nom, quantite, lc.prix, lc.prix * quantite AS prix_ligne
+FROM ligne_commande lc
+         JOIN meuble ON lc.article_id = meuble.id_article
+WHERE commande_id = %s
+GROUP BY nom, quantite, prix, prix_ligne; '''
+        mycursor.execute(sql, id_commande)
+        articles_commande = mycursor.fetchall()
 
         # partie 2 : selection de l'adresse de livraison et de facturation de la commande selectionnée
         sql = ''' selection des adressses '''
