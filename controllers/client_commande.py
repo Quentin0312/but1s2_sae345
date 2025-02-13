@@ -6,29 +6,36 @@ from datetime import datetime
 from connexion_db import get_db
 
 client_commande = Blueprint('client_commande', __name__,
-                        template_folder='templates')
+                            template_folder='templates')
 
 
 # validation de la commande : partie 2 -- vue pour choisir les adresses (livraision et facturation)
 @client_commande.route('/client/commande/valide', methods=['POST'])
 def client_commande_valide():
-    mycursor = get_db().cursor()
-    id_client = session['id_user']
-    sql = '''SELECT * FROM ligne_panier WHERE utilisateur_id=%s;'''
-    mycursor.execute(sql, id_client)
-    articles_panier = mycursor.fetchall()
-    if len(articles_panier) >= 1:
-        sql = ''' calcul du prix total du panier '''
-        prix_total = None
-    else:
-        prix_total = None
+    # mycursor = get_db().cursor()
+    # id_client = session['id_user']
+    # sql = '''SELECT * FROM ligne_panier WHERE utilisateur_id=%s;'''
+    # mycursor.execute(sql, id_client)
+    # articles_panier = mycursor.fetchall()
+    # if len(articles_panier) >= 1:
+        # sql = ''' calcul du prix total du panier '''
+    #     sql = '''
+    #     SELECT ligne_panier.quantite * meuble.prix AS prix
+    #     FROM ligne_panier
+    #              JOIN meuble ON meuble.id_article = ligne_panier.article_id
+    #     WHERE utilisateur_id = %s;
+    #     '''
+    #     mycursor.execute(sql, id_client)
+    #     prix_total = mycursor.fetchone()
+    # else:
+    #     prix_total = None
     # etape 2 : selection des adresses
     return render_template('client/boutique/panier_validation_adresses.html'
-                           #, adresses=adresses
-                           , articles_panier=articles_panier
-                           , prix_total= prix_total
-                           , validation=1
-                           #, id_adresse_fav=id_adresse_fav
+                           # , adresses=adresses
+                           # , articles_panier=articles_panier
+                           # , prix_total= prix_total
+                           # , validation=1
+                           # , id_adresse_fav=id_adresse_fav
                            )
 
 
@@ -46,37 +53,46 @@ def client_commande_add():
     if items_ligne_panier is None or len(items_ligne_panier) < 1:
         flash(u'Pas d\'articles dans le ligne_panier', 'alert-warning')
         return redirect('/client/article/show')
-                                           # https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
-    #a = datetime.strptime('my date', "%b %d %Y %H:%M")
+        # https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
+    # a = datetime.strptime('my date', "%b %d %Y %H:%M")
+
+    # prix total commande =>
+    sql = '''
+    SELECT SUM(ligne_panier.quantite * meuble.prix) AS prix_total_commande
+    FROM ligne_panier
+             JOIN meuble ON meuble.id_article = ligne_panier.article_id
+    WHERE utilisateur_id = %s;
+    '''
+    mycursor.execute(sql, id_client)
+    prix_total_commande = mycursor.fetchone()
     date_commande = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    tuple_insert = (date_commande, id_client, '1')      # 1 : etat de commande : "en cours" ou "validé"
-    sql = ''' INSERT INTO commande(date_achat, utilisateur_id, etat_id) VALUES (%s,%s,%s) '''
+    tuple_insert = (date_commande, id_client, '1', prix_total_commande['prix_total_commande'])  # 1 : etat de commande : "en cours" ou "validé"
+    sql = ''' INSERT INTO commande(date_achat, utilisateur_id, etat_id, prix_total_commande) VALUES (%s,%s,%s,%s) '''
     mycursor.execute(sql, tuple_insert)
 
     sql = '''SELECT last_insert_id() as last_insert_id'''
     mycursor.execute(sql)
-    commande_id = mycursor.fetchone
+    commande_id = mycursor.fetchone()
     print(commande_id, tuple_insert)
     # numéro de la dernière commande
     for item in items_ligne_panier:
-        tuple_insert = (id_client, item['meuble_id'])
-        sql = ''' DELETE FROM ligne_panier WHERE utilisateur_id = %s AND meuble_id = %s '''
-        mycursor.execute(sql, tuple_insert)
-        sql = ''' SELECT prix_meuble AS prix FROM meuble WHERE id_meuble = %s '''
-        mycursor.execute(sql, (item['meuble_id']))
+        sql = ''' DELETE FROM ligne_panier WHERE utilisateur_id = %s AND article_id = %s '''
+        mycursor.execute(sql, (item['utilisateur_id'], item['article_id']))
+        sql = ''' SELECT prix FROM meuble WHERE id_article = %s '''
+        mycursor.execute(sql, (item['article_id']))
         prix = mycursor.fetchone()
-        sql = ''' INSERT INTO ligne_commande(commande_id, meuble_id, prix, quantite) VALUES (%s,%s,%s,%s) '''
-        tuple_insert = (commande_id['last_insert_id'], item['meuble_id'], prix['prix'], item['quantite'])
+        print(prix)
+
+        sql = ''' INSERT INTO ligne_commande(commande_id, article_id, prix, quantite) VALUES (%s,%s,%s,%s) '''
+        tuple_insert = (commande_id['last_insert_id'], item['article_id'], prix['prix'], item['quantite'])
         print(tuple_insert)
         mycursor.execute(sql, tuple_insert)
     get_db().commit()
-    flash(u'Commande ajoutée','alert-success')
+    flash(u'Commande ajoutée', 'alert-success')
     return redirect('/client/article/show')
 
 
-
-
-@client_commande.route('/client/commande/show', methods=['get','post'])
+@client_commande.route('/client/commande/show', methods=['get', 'post'])
 def client_commande_show():
     mycursor = get_db().cursor()
     id_client = session['id_user']
@@ -98,4 +114,3 @@ def client_commande_show():
                            , articles_commande=articles_commande
                            , commande_adresses=commande_adresses
                            )
-
