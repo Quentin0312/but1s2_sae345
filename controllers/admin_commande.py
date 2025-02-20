@@ -17,22 +17,29 @@ def admin_index():
 @admin_commande.route('/admin/commande/show', methods=['get','post'])
 def admin_commande_show():
     mycursor = get_db().cursor()
-    admin_id = session['id_user']
-    sql = '''      '''
+    # admin_id = session['id_user']
+    # sql = '''SELECT login FROM utilisateur WHERE id_utilisateur = %s ;'''
+    # mycursor.execute(sql, (admin_id,))
+    # commandes=mycursor.fetchone()
+    # print(commandes)
+    sql_articles = ''' '''
+    # articles_commande = None
+    # commande_adresses = None
 
-    commandes=[]
 
-    articles_commande = None
-    commande_adresses = None
-    id_commande = request.args.get('id_commande', None)
-    print(id_commande)
-    if id_commande != None:
-        sql = '''    '''
-        commande_adresses = []
+    sql = ''' SELECT u.login,c.date_achat,l.quantite AS nbr_articles,c.prix_total_commande,e.libelle_etat
+         FROM commande c 
+         JOIN utilisateur u ON u.id_utilisateur = c.utilisateur_id 
+         JOIN ligne_commande l ON l.commande_id = c.id_commande 
+         JOIN etat e ON e.id_etat = c.etat_id 
+         ORDER BY c.date_achat DESC;
+         '''
+    mycursor.execute(sql)
+    commandes = mycursor.fetchall()
+    print(commandes)
+
     return render_template('admin/commandes/show.html'
                            , commandes=commandes
-                           , articles_commande=articles_commande
-                           , commande_adresses=commande_adresses
                            )
 
 
