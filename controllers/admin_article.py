@@ -122,7 +122,7 @@ def delete_article():
 def edit_article():
     id_article = request.args.get('id_article')
     mycursor = get_db().cursor()
-    sql = '''SELECT * FROM meuble;'''
+    sql = '''SELECT * FROM meuble WHERE id_article = %s;'''
     mycursor.execute(sql, id_article)
     article = mycursor.fetchone()
     print(article)
@@ -143,6 +143,7 @@ def edit_article():
     return render_template('admin/article/edit_article.html'
                            , article=article
                            , types_article=types_article
+                           , materiaux=materiaux
                            #  ,declinaisons_article=declinaisons_article
                            )
 
@@ -150,14 +151,21 @@ def edit_article():
 @admin_article.route('/admin/article/edit', methods=['POST'])
 def valid_edit_article():
     mycursor = get_db().cursor()
-    nom = request.form.get('nom')
+
     id_article = request.form.get('id_article')
-    image = request.files.get('image', '')
-    type_article_id = request.form.get('type_article_id', '')
+    nom = request.form.get('nom', '')
+    largeur = request.form.get('largeur', '')
+    hauteur = request.form.get('hauteur', '')
     prix = request.form.get('prix', '')
-    description = request.form.get('description')
+    materiau_id = request.form.get('materiau_id', '')
+    type_article_id = request.form.get('type_article_id', '')
+    fournisseur = request.form.get('fournisseur', '')
+    marque = request.form.get('marque', '')
+    stock = request.form.get('stock', '')
+    image = request.files.get('image', '')
+
     sql = '''
-       requête admin_article_8
+       SELECT image FROM meuble WHERE id_article = %s;
        '''
     mycursor.execute(sql, id_article)
     image_nom = mycursor.fetchone()
@@ -172,14 +180,14 @@ def valid_edit_article():
             image.save(os.path.join('static/images/', filename))
             image_nom = filename
 
-    sql = '''  requête admin_article_9 '''
-    mycursor.execute(sql, (nom, image_nom, prix, type_article_id, description, id_article))
+    sql = '''  UPDATE meuble SET nom = %s, largeur = %s, hauteur = %s, prix = %s, materiau_id = %s, type_meuble_id = %s, fournisseur = %s,
+        marque = %s, stock = %s WHERE id_article = %s; '''
+    tuple_edit = (nom, largeur, hauteur, prix, materiau_id, type_article_id, fournisseur, marque, stock, id_article)
+    mycursor.execute(sql, tuple_edit)
 
     get_db().commit()
     if image_nom is None:
         image_nom = ''
-    message = u'article modifié , nom:' + nom + '- type_article :' + type_article_id + ' - prix:' + prix + ' - image:' + image_nom + ' - description: ' + description
-    flash(message, 'alert-success')
     return redirect('/admin/article/show')
 
 
