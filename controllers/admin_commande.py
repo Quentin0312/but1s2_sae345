@@ -22,16 +22,20 @@ def admin_commande_show():
     # mycursor.execute(sql, (admin_id,))
     # commandes=mycursor.fetchone()
     # print(commandes)
-    sql_articles = ''' '''
-    # articles_commande = None
-    # commande_adresses = None
+    sql_articles = ''' SELECT m.nom, l.quantite, l.prix, l.prix * l.quantite AS prix_ligne
+    FROM ligne_commande l
+    JOIN meuble m ON m.id_article= l.article_id
+    ORDER BY m.nom;'''
+    mycursor.execute(sql_articles)
+    articles_commande = mycursor.fetchall()
+    commande_adresses = None
 
 
     sql = ''' SELECT c.id_commande, u.login,c.date_achat,l.quantite AS nbr_articles,c.prix_total_commande,e.libelle_etat
          FROM commande c 
          JOIN utilisateur u ON u.id_utilisateur = c.utilisateur_id 
          JOIN ligne_commande l ON l.commande_id = c.id_commande 
-         JOIN etat e ON e.id_etat = c.etat_id 
+         JOIN etat e ON e.id_etat = c.etat_id
          ORDER BY c.date_achat DESC;
          '''
     mycursor.execute(sql)
@@ -39,7 +43,8 @@ def admin_commande_show():
     print(commandes)
 
     return render_template('admin/commandes/show.html'
-                           , commandes=commandes
+                           , commandes=commandes,articles_commande=articles_commande
+                           , commande_adresses=commande_adresses
                            )
 
 
