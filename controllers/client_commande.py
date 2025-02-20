@@ -99,6 +99,7 @@ def client_commande_show():
     sql = '''SELECT id_commande,
        date_achat,
        etat_id,
+       etat.libelle_etat AS libelle,
        prix_total_commande                            AS prix_total,
        (SELECT SUM(quantite)
         FROM ligne_commande
@@ -106,8 +107,9 @@ def client_commande_show():
         WHERE cSR.id_commande = commande.id_commande) AS nbr_articles
 FROM commande
          JOIN ligne_commande ON commande.id_commande = ligne_commande.commande_id
+         JOIN etat ON commande.etat_id = etat.id_etat
 WHERE utilisateur_id = %s
-GROUP BY id_commande, date_achat, etat_id, prix_total
+GROUP BY id_commande, date_achat, etat_id, libelle, prix_total
 ORDER BY etat_id, date_achat;'''
     mycursor.execute(sql, id_client)
     commandes = mycursor.fetchall()
