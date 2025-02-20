@@ -37,7 +37,7 @@ def admin_commande_show():
     commande_adresses = None
 
 
-    sql = ''' SELECT c.id_commande, u.login,c.date_achat,l.quantite AS nbr_articles,c.prix_total_commande,e.libelle_etat
+    sql = ''' SELECT c.id_commande, u.login,c.date_achat,l.quantite AS nbr_articles,c.prix_total_commande,e.libelle_etat, e.id_etat AS etat_id
          FROM commande c 
          JOIN utilisateur u ON u.id_utilisateur = c.utilisateur_id 
          JOIN ligne_commande l ON l.commande_id = c.id_commande 
