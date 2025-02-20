@@ -27,7 +27,7 @@ def admin_commande_show():
     # commande_adresses = None
 
 
-    sql = ''' SELECT u.login,c.date_achat,l.quantite AS nbr_articles,c.prix_total_commande,e.libelle_etat
+    sql = ''' SELECT c.id_commande, u.login,c.date_achat,l.quantite AS nbr_articles,c.prix_total_commande,e.libelle_etat
          FROM commande c 
          JOIN utilisateur u ON u.id_utilisateur = c.utilisateur_id 
          JOIN ligne_commande l ON l.commande_id = c.id_commande 
@@ -49,7 +49,7 @@ def admin_commande_valider():
     commande_id = request.form.get('id_commande', None)
     if commande_id != None:
         print(commande_id)
-        sql = '''           '''
-        mycursor.execute(sql, commande_id)
+        sql = '''UPDATE commande SET etat_id = 2 WHERE id_commande = %s;'''
+        mycursor.execute(sql, (commande_id,))
         get_db().commit()
     return redirect('/admin/commande/show')
