@@ -1,0 +1,57 @@
+.
+├── controllers
+│    ├── admin_article.py
+│    └── ...
+├── static
+│    ├── assets
+│    │    ├── css
+│    │    │    └── bootstrap.css
+│    │    └── js
+│    │        └── bootstrap.bundle.js
+│    ├── images
+│    │    ├── bergmund-chaise.png
+│    │    └── ...
+│    ├── images_asset
+│    │    ├── addCommande2.jpeg
+│    │    └── ...
+│    ├── favicon.ico
+│    ├── logo-dept-info.ico
+│    └── mes_styles.css
+├── templates
+│    ├── admin
+│    │    ├── article
+│    │    │    ├── add_article.html
+│    │    │    └── ...
+│    │    ├── commandes
+│    │    │    └── show.html
+│    │    ├── dataviz
+│    │    │    ├── dataviz_etat_1.html
+│    │    │    └── ...
+│    │    ├── type_article
+│    │    │    ├── add_type_article.html
+│    │    │    └── ...
+│    │    ├── layout_admin.html
+│    │    └── _nav_admin.html
+│    ├── auth
+│    │    ├── forget_password.html
+│    │    └── ...
+│    └── client
+│        ├── article_info
+│        │    └── article_details.html
+│        ├── boutique
+│        │    ├── declinaison_article.html
+│        │    └── ...
+│        ├── commandes
+│        │    └── show.html
+│        ├── coordonnee
+│        │    ├── add_adresse.html
+│        │    └── ...
+│        ├── liste_envies
+│        │    └── liste_envies_show.html
+│        ├── layout_client.html
+│        └── _nav_client.html
+├── app.py
+├── connexion_db.py
+├── flask_run.sh
+└── sae_sql.sql
+
