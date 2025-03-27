@@ -1,0 +1,31 @@
+├── controllers
+│    ├── <controler1>.py
+│    └── ...
+├── static
+│    ├── images
+│    │    ├── <image_d'illustration1>.png
+│    │    └── ...
+│    ├── images_asset
+│    │    ├── <image1>.jpeg
+│    │    └── ...
+│    ├── favicon.ico
+│    └── mes_styles.css
+├── templates
+│    ├── admin
+│    │    ├── <section1>
+│    │    │    ├── <page1>.html
+│    │    │    │    └── ...
+│    │    │    └── ...
+│    ├── auth
+│    │    ├── <page_auth1>.html
+│    │    └── ...
+│    └── client
+│        ├── <section1>
+│        │    ├── <page1>.html
+│        │    └── ...
+│        └── ...
+├── app.py
+├── connexion_db.py
+├── flask_run.sh
+└── sae_sql.sql
+
