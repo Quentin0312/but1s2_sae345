@@ -21,16 +21,14 @@ def client_article_details():
     # client_historique_add(id_article, id_client)
 
     sql = '''
-    SELECT nom, prix, image, description, ROUND(AVG(note.note),1) AS moyenne_notes, COUNT(note.note) AS nb_notes
+    SELECT id_article, nom, prix, image, description, ROUND(AVG(note.note),1) AS moyenne_notes, COUNT(note.note) AS nb_notes
     FROM meuble
              JOIN note ON meuble.id_article = note.id_meuble
     WHERE id_article = %s
-    GROUP BY nom, prix, image, description;
+    GROUP BY id_article, nom, prix, image, description;
     '''
     mycursor.execute(sql, id_article)
     article = mycursor.fetchone()
-    # article=[]
-    commandes_articles=[]
     nb_commentaires=[]
     if article is None:
         abort(404, "pb id article")
@@ -39,17 +37,25 @@ def client_article_details():
     # '''
     # mycursor.execute(sql, ( id_article))
     # commentaires = mycursor.fetchall()
-    # sql = '''
-    # '''
-    # mycursor.execute(sql, (id_client, id_article))
-    # commandes_articles = mycursor.fetchone()
-    # sql = '''
-    # '''
-    # mycursor.execute(sql, (id_client, id_article))
-    # note = mycursor.fetchone()
-    # print('note',note)
-    # if note:
-    #     note=note['note']
+    sql = '''
+    SELECT COUNT(commande_id) AS nb_commandes_article
+    FROM ligne_commande
+    WHERE commande_id IN (SELECT id_commande FROM commande WHERE utilisateur_id = %s)
+      AND article_id = %s;
+    '''
+    mycursor.execute(sql, (id_client, id_article))
+    commandes_articles = mycursor.fetchone()
+    sql = '''
+    SELECT note
+    FROM note
+    WHERE id_utilisateur = %s
+      AND id_meuble = %s;
+    '''
+    mycursor.execute(sql, (id_client, id_article))
+    note = mycursor.fetchone()
+    print('note',note)
+    if note:
+        note=note['note']
     # sql = '''
     # '''
     # mycursor.execute(sql, (id_client, id_article))
@@ -58,7 +64,7 @@ def client_article_details():
                            , article=article
                            # , commentaires=commentaires
                            , commandes_articles=commandes_articles
-                           # , note=note
+                           , note=note
                             , nb_commentaires=nb_commentaires
                            )
 
@@ -116,7 +122,12 @@ def client_note_edit():
     id_article = request.form.get('id_article', None)
     tuple_update = (note, id_client, id_article)
     print(tuple_update)
-    sql = '''  '''
+    sql = '''
+    UPDATE note
+    SET note = %s
+    WHERE id_utilisateur = %s
+      AND id_meuble = %s;
+    '''
     mycursor.execute(sql, tuple_update)
     get_db().commit()
     return redirect('/client/article/details?id_article='+id_article)
