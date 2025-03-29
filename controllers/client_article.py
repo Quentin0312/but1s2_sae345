@@ -24,12 +24,13 @@ def client_article_show():                                 # remplace client_ind
             prix,
             stock AS stock,
             image AS image,
-            COUNT(DISTINCT CONCAT(n.note, '-', n.id_utilisateur))        AS nb_notes,
-            AVG(n.note)                                                  AS moy_notes,
-            COUNT(DISTINCT CONCAT(c.commentaire, '-', c.id_utilisateur)) AS nb_avis
+           COUNT(n.note) AS nb_notes,
+           ROUND(AVG(n.note),1)   AS moy_notes,
+           COALESCE(subrequest.nb_avis,0) AS nb_avis
             FROM meuble
                 LEFT JOIN note n ON meuble.id_article = n.id_meuble
-                LEFT JOIN commentaire c ON meuble.id_article = c.id_article'''
+                LEFT JOIN (SELECT id_article, COUNT(id_article) AS nb_avis FROM commentaire GROUP BY id_article) AS subrequest
+              ON subrequest.id_article = meuble.id_article'''
 
     list_param = []
 
@@ -91,7 +92,7 @@ def client_article_show():                                 # remplace client_ind
         sql += ' ) '
 
     # Requete SQL
-    sql += " GROUP BY id_article, nom, prix, stock, image ORDER BY nom;"
+    sql += " GROUP BY id_article, nom, prix, stock, image, nb_avis ORDER BY nom;"
     print("sql => ", sql)
     print("args => ", tuple(list_param))
     if len(list_param) == 0:

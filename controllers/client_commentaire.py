@@ -21,10 +21,15 @@ def client_article_details():
     # client_historique_add(id_article, id_client)
 
     sql = '''
+    SELECT nom, prix, image, description, ROUND(AVG(note.note),1) AS moyenne_notes, COUNT(note.note) AS nb_notes
+    FROM meuble
+             JOIN note ON meuble.id_article = note.id_meuble
+    WHERE id_article = %s
+    GROUP BY nom, prix, image, description;
     '''
-    #mycursor.execute(sql, id_article)
-    #article = mycursor.fetchone()
-    article=[]
+    mycursor.execute(sql, id_article)
+    article = mycursor.fetchone()
+    # article=[]
     commandes_articles=[]
     nb_commentaires=[]
     if article is None:
