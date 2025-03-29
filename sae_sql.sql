@@ -189,3 +189,7 @@ VALUES (2, 11, 277.99, 1),
 INSERT INTO note
 VALUES (3, 2, 3.5),
        (4, 2, 4.0);
+
+INSERT INTO commentaire
+VALUES (3, 2, '2024-12-02', 'pas mal', true),
+       (3, 2, '2024-12-04', 'pas trop mal', false)

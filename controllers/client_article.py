@@ -18,15 +18,18 @@ def client_article_show():                                 # remplace client_ind
     condition_and = ""
     # utilisation du filtre
     sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
-    sql = '''SELECT id_article,
+    # TODO : Clean COUNT(DISTINCT CONCAT( => problème : 2 fois le meme com
+    sql = '''SELECT meuble.id_article,
             nom,
             prix,
             stock AS stock,
             image AS image,
-            COUNT(n.note) AS nb_notes,
-            AVG(n.note)   AS moy_notes
+            COUNT(DISTINCT CONCAT(n.note, '-', n.id_utilisateur))        AS nb_notes,
+            AVG(n.note)                                                  AS moy_notes,
+            COUNT(DISTINCT CONCAT(c.commentaire, '-', c.id_utilisateur)) AS nb_avis
             FROM meuble
-                LEFT JOIN note n ON meuble.id_article = n.id_meuble'''
+                LEFT JOIN note n ON meuble.id_article = n.id_meuble
+                LEFT JOIN commentaire c ON meuble.id_article = c.id_article'''
 
     list_param = []
 
