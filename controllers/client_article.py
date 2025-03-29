@@ -22,8 +22,11 @@ def client_article_show():                                 # remplace client_ind
             nom,
             prix,
             stock AS stock,
-            image AS image
-            FROM meuble'''
+            image AS image,
+            COUNT(n.note) AS nb_notes,
+            AVG(n.note)   AS moy_notes
+            FROM meuble
+                LEFT JOIN note n ON meuble.id_article = n.id_meuble'''
 
     list_param = []
 
@@ -85,7 +88,9 @@ def client_article_show():                                 # remplace client_ind
         sql += ' ) '
 
     # Requete SQL
-    sql += " ORDER BY nom;"
+    sql += " GROUP BY id_article, nom, prix, stock, image ORDER BY nom;"
+    print("sql => ", sql)
+    print("args => ", tuple(list_param))
     if len(list_param) == 0:
         mycursor.execute(sql)
     else:

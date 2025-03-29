@@ -1,5 +1,7 @@
 DROP TABLE IF EXISTS ligne_commande;
 DROP TABLE IF EXISTS ligne_panier;
+DROP TABLE IF EXISTS commentaire;
+DROP TABLE IF EXISTS note;
 DROP TABLE IF EXISTS meuble;
 DROP TABLE IF EXISTS type_meuble;
 DROP TABLE IF EXISTS materiau;
@@ -37,7 +39,10 @@ CREATE TABLE etat
     libelle_etat VARCHAR(255),
     PRIMARY KEY (id_etat)
 );
-INSERT INTO etat(libelle_etat) VALUES ('en cours de traitement'), ('expédié'), ('validé');
+INSERT INTO etat(libelle_etat)
+VALUES ('en cours de traitement'),
+       ('expédié'),
+       ('validé');
 
 CREATE TABLE commande
 (
@@ -68,11 +73,11 @@ CREATE TABLE type_meuble
 
 CREATE TABLE meuble
 (
-    id_article      INT NOT NULL AUTO_INCREMENT,
-    nom     VARCHAR(255),
+    id_article     INT NOT NULL AUTO_INCREMENT,
+    nom            VARCHAR(255),
     largeur        NUMERIC(7, 2),
     hauteur        NUMERIC(7, 2),
-    prix    NUMERIC(7, 2),
+    prix           NUMERIC(7, 2),
     materiau_id    INT NOT NULL,
     type_meuble_id INT NOT NULL,
     fournisseur    VARCHAR(255),
@@ -84,10 +89,32 @@ CREATE TABLE meuble
     CONSTRAINT fk_meuble_type_meuble FOREIGN KEY (type_meuble_id) REFERENCES type_meuble (id_type)
 );
 
+CREATE TABLE note
+(
+    id_meuble      INT,
+    id_utilisateur INT,
+    note           DECIMAL(2, 1),
+    PRIMARY KEY (id_meuble, id_utilisateur),
+    CONSTRAINT fk_note_meuble FOREIGN KEY (id_meuble) REFERENCES meuble (id_article),
+    CONSTRAINT fk_note_utilisateur FOREIGN KEY (id_utilisateur) REFERENCES utilisateur (id_utilisateur)
+);
+
+CREATE TABLE commentaire
+(
+    id_article       INT,
+    id_utilisateur   INT,
+    date_publication DATE,
+    commentaire      VARCHAR(255),
+    valider          BOOLEAN,
+    PRIMARY KEY (id_article, id_utilisateur, date_publication),
+    CONSTRAINT fk_commentaire_meuble FOREIGN KEY (id_article) REFERENCES meuble (id_article),
+    CONSTRAINT fk_commentaire_utilisateur FOREIGN KEY (id_utilisateur) REFERENCES utilisateur (id_utilisateur)
+);
+
 CREATE TABLE ligne_commande
 (
     commande_id INT,
-    article_id   INT,
+    article_id  INT,
     prix        NUMERIC(7, 2),
     quantite    INT,
     CONSTRAINT fk_lignecommande_commande FOREIGN KEY (commande_id) REFERENCES commande (id_commande),
@@ -96,10 +123,10 @@ CREATE TABLE ligne_commande
 
 CREATE TABLE ligne_panier
 (
-    utilisateur_id    INT,
-    article_id         INT,
-    quantite   INT,
-    date_ajout DATE,
+    utilisateur_id INT,
+    article_id     INT,
+    quantite       INT,
+    date_ajout     DATE,
     CONSTRAINT fk_lignepanier_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur),
     CONSTRAINT fk_lignepanier_meuble FOREIGN KEY (article_id) REFERENCES meuble (id_article)
 );
@@ -139,20 +166,26 @@ VALUES (NULL, 'ÖSTANÖ', 39, 75, 20.99, 3, 1, 'Maison du meuble', 'Miliboo', 45
        (NULL, 'PLATSA', 160, 181, 262, 2, 5, 'Maison du meuble', 'Tikamoon', 85, 'platsa-armoire.png'),
        (NULL, 'RAKKESTAD', 117.3, 175.7, 179, 2, 5, 'NV Gallery', 'Kave Home', 60, 'rakkestad-armoire.png');
 
-DELETE FROM ligne_commande;
-DELETE FROM commande;
+DELETE
+FROM ligne_commande;
+DELETE
+FROM commande;
 
-INSERT INTO commande (id_commande,date_achat, utilisateur_id, etat_id, prix_total_commande)
-VALUES (1,'2024-11-16 14:45:22', 2, 2, 956.99);
+INSERT INTO commande (id_commande, date_achat, utilisateur_id, etat_id, prix_total_commande)
+VALUES (1, '2024-11-16 14:45:22', 2, 2, 956.99);
 
 INSERT INTO ligne_commande
-VALUES (1, 3,89.99, 1),
+VALUES (1, 3, 89.99, 1),
        (1, 4, 289.00, 3);
 
-INSERT INTO commande (id_commande,date_achat, utilisateur_id, etat_id, prix_total_commande)
-VALUES (2,'2025-02-01 09:21:52', 2, 1, 378.99);
+INSERT INTO commande (id_commande, date_achat, utilisateur_id, etat_id, prix_total_commande)
+VALUES (2, '2025-02-01 09:21:52', 2, 1, 378.99);
 
 INSERT INTO ligne_commande
 VALUES (2, 11, 277.99, 1),
        (2, 2, 20.99, 6);
 
+# TODO : Tester avec plusieurs notes (provenant de différents acheteurs)
+INSERT INTO note
+VALUES (3, 2, 3.5),
+       (4, 2, 4.0);
