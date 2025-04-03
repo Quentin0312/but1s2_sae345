@@ -118,7 +118,13 @@ def client_comment_detete():
     id_client = session['id_user']
     id_article = request.form.get('id_article', None)
     date_publication = request.form.get('date_publication', None)
-    sql = '''   '''
+    sql = '''
+    DELETE
+    FROM commentaire
+    WHERE id_utilisateur = %s
+      AND id_article = %s
+      AND date_publication = %s;
+    '''
     tuple_delete = (id_client, id_article, date_publication)
     mycursor.execute(sql, tuple_delete)
     get_db().commit()
