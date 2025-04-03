@@ -29,13 +29,17 @@ def client_article_details():
     '''
     mycursor.execute(sql, id_article)
     article = mycursor.fetchone()
-    # nb_commentaires=[]
     if article is None:
         abort(404, "pb id article")
-    # sql = '''
-    # '''
-    # mycursor.execute(sql, ( id_article))
-    # commentaires = mycursor.fetchall()
+    # TODO : Vérfiier l'affichage des réponses de l'administrateur !
+    sql = '''
+    SELECT nom, commentaire.id_utilisateur, commentaire, valider, id_article, date_publication
+    FROM commentaire
+             LEFT JOIN utilisateur ON commentaire.id_utilisateur = utilisateur.id_utilisateur
+    WHERE id_article = %s;
+    '''
+    mycursor.execute(sql, id_article)
+    commentaires = mycursor.fetchall()
     sql = '''
     SELECT COUNT(commande_id) AS nb_commandes_article
     FROM ligne_commande
@@ -77,7 +81,7 @@ SELECT (SELECT COUNT(*)
     nb_commentaires = mycursor.fetchone()
     return render_template('client/article_info/article_details.html'
                            , article=article
-                           # , commentaires=commentaires
+                           , commentaires=commentaires
                            , commandes_articles=commandes_articles
                            , note=note
                            , nb_commentaires=nb_commentaires
