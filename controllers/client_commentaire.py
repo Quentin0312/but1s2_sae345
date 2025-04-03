@@ -23,7 +23,7 @@ def client_article_details():
     sql = '''
     SELECT id_article, nom, prix, image, description, ROUND(AVG(note.note),1) AS moyenne_notes, COUNT(note.note) AS nb_notes
     FROM meuble
-             JOIN note ON meuble.id_article = note.id_meuble
+             LEFT JOIN note ON meuble.id_article = note.id_meuble
     WHERE id_article = %s
     GROUP BY id_article, nom, prix, image, description;
     '''
@@ -139,7 +139,12 @@ def client_note_delete():
     id_article = request.form.get('id_article', None)
     tuple_delete = (id_client, id_article)
     print(tuple_delete)
-    sql = '''  '''
+    sql = '''
+    DELETE
+    FROM note
+    WHERE id_utilisateur = %s
+      AND id_meuble = %s;
+    '''
     mycursor.execute(sql, tuple_delete)
     get_db().commit()
     return redirect('/client/article/details?id_article='+id_article)

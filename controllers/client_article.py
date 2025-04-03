@@ -18,7 +18,6 @@ def client_article_show():                                 # remplace client_ind
     condition_and = ""
     # utilisation du filtre
     sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
-    # TODO : Clean COUNT(DISTINCT CONCAT( => problème : 2 fois le meme com
     sql = '''SELECT meuble.id_article,
             nom,
             prix,
