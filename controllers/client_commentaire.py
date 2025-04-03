@@ -8,13 +8,13 @@ from connexion_db import get_db
 from controllers.client_liste_envies import client_historique_add
 
 client_commentaire = Blueprint('client_commentaire', __name__,
-                        template_folder='templates')
+                               template_folder='templates')
 
 
 @client_commentaire.route('/client/article/details', methods=['GET'])
 def client_article_details():
     mycursor = get_db().cursor()
-    id_article =  request.args.get('id_article', None)
+    id_article = request.args.get('id_article', None)
     id_client = session['id_user']
 
     ## partie 4
@@ -29,11 +29,10 @@ def client_article_details():
     '''
     mycursor.execute(sql, id_article)
     article = mycursor.fetchone()
-    nb_commentaires=[]
+    # nb_commentaires=[]
     if article is None:
         abort(404, "pb id article")
     # sql = '''
-    #
     # '''
     # mycursor.execute(sql, ( id_article))
     # commentaires = mycursor.fetchall()
@@ -53,20 +52,37 @@ def client_article_details():
     '''
     mycursor.execute(sql, (id_client, id_article))
     note = mycursor.fetchone()
-    print('note',note)
+    print('note', note)
     if note:
-        note=note['note']
-    # sql = '''
-    # '''
-    # mycursor.execute(sql, (id_client, id_article))
-    # nb_commentaires = mycursor.fetchone()
+        note = note['note']
+    sql = '''
+SELECT (SELECT COUNT(*)
+        FROM commentaire
+        WHERE id_article = %s)  AS nb_commentaires_total,
+       (SELECT COUNT(*)
+        FROM commentaire
+        WHERE id_utilisateur = %s
+          AND id_article = %s)  AS nb_commentaires_utilisateur,
+       (SELECT COUNT(*)
+        FROM commentaire
+        WHERE id_utilisateur = %s
+          AND id_article = %s
+          AND valider IS TRUE) AS nb_commentaires_utilisateur_valide,
+       (SELECT COUNT(*)
+        FROM commentaire
+        WHERE valider IS TRUE
+          AND id_article = %s)  AS nb_commentaires_total_valide;
+    '''
+    mycursor.execute(sql, (id_article, id_client, id_article, id_client, id_article, id_article))
+    nb_commentaires = mycursor.fetchone()
     return render_template('client/article_info/article_details.html'
                            , article=article
                            # , commentaires=commentaires
                            , commandes_articles=commandes_articles
                            , note=note
-                            , nb_commentaires=nb_commentaires
+                           , nb_commentaires=nb_commentaires
                            )
+
 
 @client_commentaire.route('/client/commentaire/add', methods=['POST'])
 def client_comment_add():
@@ -76,17 +92,17 @@ def client_comment_add():
     id_article = request.form.get('id_article', None)
     if commentaire == '':
         flash(u'Commentaire non prise en compte')
-        return redirect('/client/article/details?id_article='+id_article)
-    if commentaire != None and len(commentaire)>0 and len(commentaire) <3 :
-        flash(u'Commentaire avec plus de 2 caractères','alert-warning')              # 
-        return redirect('/client/article/details?id_article='+id_article)
+        return redirect('/client/article/details?id_article=' + id_article)
+    if commentaire != None and len(commentaire) > 0 and len(commentaire) < 3:
+        flash(u'Commentaire avec plus de 2 caractères', 'alert-warning')  #
+        return redirect('/client/article/details?id_article=' + id_article)
 
     tuple_insert = (commentaire, id_client, id_article)
     print(tuple_insert)
     sql = '''  '''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
-    return redirect('/client/article/details?id_article='+id_article)
+    return redirect('/client/article/details?id_article=' + id_article)
 
 
 @client_commentaire.route('/client/commentaire/delete', methods=['POST'])
@@ -96,10 +112,11 @@ def client_comment_detete():
     id_article = request.form.get('id_article', None)
     date_publication = request.form.get('date_publication', None)
     sql = '''   '''
-    tuple_delete=(id_client,id_article,date_publication)
+    tuple_delete = (id_client, id_article, date_publication)
     mycursor.execute(sql, tuple_delete)
     get_db().commit()
-    return redirect('/client/article/details?id_article='+id_article)
+    return redirect('/client/article/details?id_article=' + id_article)
+
 
 @client_commentaire.route('/client/note/add', methods=['POST'])
 def client_note_add():
@@ -112,7 +129,8 @@ def client_note_add():
     sql = '''   '''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
-    return redirect('/client/article/details?id_article='+id_article)
+    return redirect('/client/article/details?id_article=' + id_article)
+
 
 @client_commentaire.route('/client/note/edit', methods=['POST'])
 def client_note_edit():
@@ -130,7 +148,8 @@ def client_note_edit():
     '''
     mycursor.execute(sql, tuple_update)
     get_db().commit()
-    return redirect('/client/article/details?id_article='+id_article)
+    return redirect('/client/article/details?id_article=' + id_article)
+
 
 @client_commentaire.route('/client/note/delete', methods=['POST'])
 def client_note_delete():
@@ -147,4 +166,4 @@ def client_note_delete():
     '''
     mycursor.execute(sql, tuple_delete)
     get_db().commit()
-    return redirect('/client/article/details?id_article='+id_article)
+    return redirect('/client/article/details?id_article=' + id_article)
