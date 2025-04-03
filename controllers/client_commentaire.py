@@ -95,15 +95,18 @@ def client_comment_add():
     id_client = session['id_user']
     id_article = request.form.get('id_article', None)
     if commentaire == '':
-        flash(u'Commentaire non prise en compte')
+        flash(u'Commentaire non prise en compte', 'alert-warning')
         return redirect('/client/article/details?id_article=' + id_article)
     if commentaire != None and len(commentaire) > 0 and len(commentaire) < 3:
         flash(u'Commentaire avec plus de 2 caractères', 'alert-warning')  #
         return redirect('/client/article/details?id_article=' + id_article)
 
-    tuple_insert = (commentaire, id_client, id_article)
+    tuple_insert = (id_article, id_client, commentaire)
     print(tuple_insert)
-    sql = '''  '''
+    sql = '''
+    INSERT INTO commentaire
+    VALUES (%s, %s, NOW(), %s, 0);
+    '''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
     return redirect('/client/article/details?id_article=' + id_article)
