@@ -101,6 +101,19 @@ def client_comment_add():
         flash(u'Commentaire avec plus de 2 caractères', 'alert-warning')  #
         return redirect('/client/article/details?id_article=' + id_article)
 
+    # Vérifier que nombre de comm < 3
+    sql = '''
+    SELECT COUNT(*) AS nombre_commentaire
+    FROM commentaire
+    WHERE id_article = %s
+      AND id_utilisateur = %s;
+    '''
+    mycursor.execute(sql, (id_article, id_client))
+    nombre_commentaire = mycursor.fetchone()
+    if nombre_commentaire['nombre_commentaire'] >=3:
+        flash(u'3 Commentaires maximum !', 'alert-warning')
+        return redirect('/client/article/details?id_article=' + id_article)
+
     tuple_insert = (id_article, id_client, commentaire)
     print(tuple_insert)
     sql = '''

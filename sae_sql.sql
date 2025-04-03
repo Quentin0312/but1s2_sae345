@@ -104,7 +104,7 @@ CREATE TABLE commentaire
 (
     id_article       INT,
     id_utilisateur   INT,
-    date_publication DATE,
+    date_publication DATETIME,
     commentaire      VARCHAR(255),
     valider          BOOLEAN,
     PRIMARY KEY (id_article, id_utilisateur, date_publication),
