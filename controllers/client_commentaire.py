@@ -32,6 +32,7 @@ def client_article_details():
     if article is None:
         abort(404, "pb id article")
     # TODO : Vérfiier l'affichage des réponses de l'administrateur !
+    # TODO : C'est pas bon donc fix => doit s'afficher au desssous
     sql = '''
     SELECT nom, commentaire.id_utilisateur, commentaire, valider, id_article, date_publication
     FROM commentaire
@@ -60,22 +61,22 @@ def client_article_details():
     if note:
         note = note['note']
     sql = '''
-SELECT (SELECT COUNT(*)
-        FROM commentaire
-        WHERE id_article = %s)  AS nb_commentaires_total,
-       (SELECT COUNT(*)
-        FROM commentaire
-        WHERE id_utilisateur = %s
-          AND id_article = %s)  AS nb_commentaires_utilisateur,
-       (SELECT COUNT(*)
-        FROM commentaire
-        WHERE id_utilisateur = %s
-          AND id_article = %s
-          AND valider IS TRUE) AS nb_commentaires_utilisateur_valide,
-       (SELECT COUNT(*)
-        FROM commentaire
-        WHERE valider IS TRUE
-          AND id_article = %s)  AS nb_commentaires_total_valide;
+    SELECT (SELECT COUNT(*)
+            FROM commentaire
+            WHERE id_article = %s)  AS nb_commentaires_total,
+           (SELECT COUNT(*)
+            FROM commentaire
+            WHERE id_utilisateur = %s
+              AND id_article = %s)  AS nb_commentaires_utilisateur,
+           (SELECT COUNT(*)
+            FROM commentaire
+            WHERE id_utilisateur = %s
+              AND id_article = %s
+              AND valider IS TRUE) AS nb_commentaires_utilisateur_valide,
+           (SELECT COUNT(*)
+            FROM commentaire
+            WHERE valider IS TRUE
+              AND id_article = %s)  AS nb_commentaires_total_valide;
     '''
     mycursor.execute(sql, (id_article, id_client, id_article, id_client, id_article, id_article))
     nb_commentaires = mycursor.fetchone()
