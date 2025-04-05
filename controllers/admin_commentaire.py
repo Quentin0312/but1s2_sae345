@@ -94,6 +94,11 @@ def admin_comment_add():
 def admin_comment_valider():
     id_article = request.args.get('id_article', None)
     mycursor = get_db().cursor()
-    sql = '''   requête admin_type_article_4   '''
+    sql = '''
+    UPDATE commentaire c
+    SET valider = true
+    WHERE c.id_article = %s;
+    '''
+    mycursor.execute(sql, (id_article,))
     get_db().commit()
     return redirect('/admin/article/commentaires?id_article=' + id_article)
