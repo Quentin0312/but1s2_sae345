@@ -43,13 +43,13 @@
                     {% else %}
                     <tr>
                     {% endif %}
-                        <td>{{ commentaire.nom }}({{ commentaire.id_utilisateur }})</td>
-                        <td> {% if commentaire.utilisateur_id == session['id_user'] %}
+                        <td style="background-color: rgba(0,0,0,0)">{{ commentaire.nom }}({{ commentaire.id_utilisateur }})</td>
+                        <td style="background-color: rgba(0,0,0,0)"> {% if commentaire.utilisateur_id == session['id_user'] %}
                             <span style="color: red">(réponse de l'administrateur du site (webmaster) :</span>
                             {% endif %}
                             {{ commentaire.commentaire }}
                         </td>
-                        <td>
+                        <td style="background-color: rgba(0,0,0,0)">
                                   <form  action="/admin/article/commentaires/delete"  style="display: inline-block;"  method="post" >
                                       <input type="hidden" name="id_article" value="{{ commentaire.id_article }}">
                                       <input type="hidden" name="id_utilisateur" value="{{ commentaire.id_utilisateur }}">

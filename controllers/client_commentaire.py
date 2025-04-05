@@ -119,7 +119,7 @@ def client_comment_add():
     print(tuple_insert)
     sql = '''
     INSERT INTO commentaire
-    VALUES (%s, %s, NOW(), %s, 0);
+    VALUES (%s, %s, null, NOW(), %s, 0);
     '''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()

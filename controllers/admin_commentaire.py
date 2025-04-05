@@ -6,24 +6,50 @@ from flask import Flask, request, render_template, redirect, abort, flash, sessi
 from connexion_db import get_db
 
 admin_commentaire = Blueprint('admin_commentaire', __name__,
-                        template_folder='templates')
+                              template_folder='templates')
 
 
 @admin_commentaire.route('/admin/article/commentaires', methods=['GET'])
 def admin_article_details():
     mycursor = get_db().cursor()
-    id_article =  request.args.get('id_article', None)
-    sql = '''    requête admin_type_article_1    '''
-    commentaires = {}
-    sql = '''   requête admin_type_article_1_bis   '''
-    article = []
-    sql = '''   requête admin_type_article_1_3   '''
-    nb_commentaires = []
+    id_article = request.args.get('id_article', None)
+
+    sql = '''
+    SELECT nom, commentaire, c.id_utilisateur, c.utilisateur_id, c.valider
+    FROM commentaire c
+             LEFT JOIN utilisateur u ON u.id_utilisateur = c.id_utilisateur;
+    '''
+    mycursor.execute(sql)
+    commentaires = mycursor.fetchall()
+
+    sql = '''
+    SELECT id_article, nom, COUNT(note) AS nb_notes, ROUND(AVG(note), 1) AS moyenne_notes
+    FROM meuble m
+             LEFT JOIN note n ON n.id_meuble = m.id_article
+    WHERE id_article = %s
+    GROUP BY id_article, nom;
+    '''
+    mycursor.execute(sql, (id_article,))
+    article = mycursor.fetchone()
+
+    sql = '''
+    SELECT (SELECT COUNT(*)
+            FROM commentaire c
+            WHERE c.id_article = %s)  AS nb_commentaires_total,
+           (SELECT COUNT(*)
+            FROM commentaire c
+            WHERE c.id_article = %s
+              AND c.valider IS TRUE) AS nb_commentaires_valider;
+    '''
+    mycursor.execute(sql, (id_article, id_article))
+    nb_commentaires = mycursor.fetchone()
+
     return render_template('admin/article/show_article_commentaires.html'
                            , commentaires=commentaires
                            , article=article
                            , nb_commentaires=nb_commentaires
                            )
+
 
 @admin_commentaire.route('/admin/article/commentaires/delete', methods=['POST'])
 def admin_comment_delete():
@@ -32,33 +58,34 @@ def admin_comment_delete():
     id_article = request.form.get('id_article', None)
     date_publication = request.form.get('date_publication', None)
     sql = '''    requête admin_type_article_2   '''
-    tuple_delete=(id_utilisateur,id_article,date_publication)
+    tuple_delete = (id_utilisateur, id_article, date_publication)
     get_db().commit()
-    return redirect('/admin/article/commentaires?id_article='+id_article)
+    return redirect('/admin/article/commentaires?id_article=' + id_article)
 
 
-@admin_commentaire.route('/admin/article/commentaires/repondre', methods=['POST','GET'])
+@admin_commentaire.route('/admin/article/commentaires/repondre', methods=['POST', 'GET'])
 def admin_comment_add():
     if request.method == 'GET':
         id_utilisateur = request.args.get('id_utilisateur', None)
         id_article = request.args.get('id_article', None)
         date_publication = request.args.get('date_publication', None)
-        return render_template('admin/article/add_commentaire.html',id_utilisateur=id_utilisateur,id_article=id_article,date_publication=date_publication )
+        return render_template('admin/article/add_commentaire.html', id_utilisateur=id_utilisateur,
+                               id_article=id_article, date_publication=date_publication)
 
     mycursor = get_db().cursor()
-    id_utilisateur = session['id_user']   #1 admin
+    id_utilisateur = session['id_user']  # 1 admin
     id_article = request.form.get('id_article', None)
     date_publication = request.form.get('date_publication', None)
     commentaire = request.form.get('commentaire', None)
     sql = '''    requête admin_type_article_3   '''
     get_db().commit()
-    return redirect('/admin/article/commentaires?id_article='+id_article)
+    return redirect('/admin/article/commentaires?id_article=' + id_article)
 
 
-@admin_commentaire.route('/admin/article/commentaires/valider', methods=['POST','GET'])
+@admin_commentaire.route('/admin/article/commentaires/valider', methods=['POST', 'GET'])
 def admin_comment_valider():
     id_article = request.args.get('id_article', None)
     mycursor = get_db().cursor()
     sql = '''   requête admin_type_article_4   '''
     get_db().commit()
-    return redirect('/admin/article/commentaires?id_article='+id_article)
+    return redirect('/admin/article/commentaires?id_article=' + id_article)

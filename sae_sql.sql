@@ -104,12 +104,14 @@ CREATE TABLE commentaire
 (
     id_article       INT,
     id_utilisateur   INT,
+    utilisateur_id   INT,
     date_publication DATETIME,
     commentaire      VARCHAR(255),
     valider          BOOLEAN,
     PRIMARY KEY (id_article, id_utilisateur, date_publication),
     CONSTRAINT fk_commentaire_meuble FOREIGN KEY (id_article) REFERENCES meuble (id_article),
-    CONSTRAINT fk_commentaire_utilisateur FOREIGN KEY (id_utilisateur) REFERENCES utilisateur (id_utilisateur)
+    CONSTRAINT fk_commentaire_utilisateur FOREIGN KEY (id_utilisateur) REFERENCES utilisateur (id_utilisateur),
+    CONSTRAINT fk_commentaire_admin FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur)
 );
 
 CREATE TABLE ligne_commande
@@ -193,24 +195,27 @@ DELETE
 FROM commande;
 
 INSERT INTO commande (id_commande, date_achat, utilisateur_id, etat_id, prix_total_commande)
-VALUES (1, '2024-11-16 14:45:22', 2, 2, 956.99);
+VALUES (1, '2024-11-16 14:45:22', 2, 2, 956.99),
+       (2, '2024-11-20 14:45:22', 3, 2, 269.97);
 
 INSERT INTO ligne_commande
 VALUES (1, 3, 89.99, 1),
-       (1, 4, 289.00, 3);
+       (1, 4, 289.00, 3),
+       (2, 3, 89.99, 3);
 
 INSERT INTO commande (id_commande, date_achat, utilisateur_id, etat_id, prix_total_commande)
-VALUES (2, '2025-02-01 09:21:52', 2, 1, 378.99);
+VALUES (3, '2025-02-01 09:21:52', 2, 1, 378.99);
 
 INSERT INTO ligne_commande
-VALUES (2, 11, 277.99, 1),
-       (2, 2, 20.99, 6);
+VALUES (3, 11, 277.99, 1),
+       (3, 2, 20.99, 6);
 
 # TODO : Tester avec plusieurs notes (provenant de différents acheteurs)
 INSERT INTO note
 VALUES (3, 2, 3.5),
+       (3, 3, 2.5),
        (4, 2, 4.0);
 
 INSERT INTO commentaire
-VALUES (3, 2, '2024-12-02', 'pas mal', true),
-       (3, 2, '2024-12-04', 'pas trop mal', false)
+VALUES (3, 2, null, '2024-12-02', 'pas mal', true),
+       (3, 2, null, '2024-12-04', 'pas trop mal', false)
