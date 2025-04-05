@@ -15,7 +15,7 @@ def admin_article_details():
     id_article = request.args.get('id_article', None)
 
     sql = '''
-    SELECT nom, commentaire, c.id_utilisateur, c.utilisateur_id, c.valider
+    SELECT nom, commentaire, c.id_article, c.id_utilisateur, c.date_publication ,c.utilisateur_id, c.valider
     FROM commentaire c
              LEFT JOIN utilisateur u ON u.id_utilisateur = c.id_utilisateur;
     '''
@@ -57,8 +57,16 @@ def admin_comment_delete():
     id_utilisateur = request.form.get('id_utilisateur', None)
     id_article = request.form.get('id_article', None)
     date_publication = request.form.get('date_publication', None)
-    sql = '''    requête admin_type_article_2   '''
+
+    sql = '''
+    DELETE
+    FROM commentaire c
+    WHERE c.id_utilisateur = %s
+      AND c.id_article = %s
+      AND c.date_publication = %s;
+    '''
     tuple_delete = (id_utilisateur, id_article, date_publication)
+    mycursor.execute(sql, tuple_delete)
     get_db().commit()
     return redirect('/admin/article/commentaires?id_article=' + id_article)
 
