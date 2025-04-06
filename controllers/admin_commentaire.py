@@ -15,9 +15,10 @@ def admin_article_details():
     id_article = request.args.get('id_article', None)
 
     sql = '''
-    SELECT nom, commentaire, c.id_article, c.id_utilisateur, c.date_publication ,c.utilisateur_id, c.valider
+    SELECT nom, commentaire, c.id_article, c.id_utilisateur, c.date_publication, c.utilisateur_id, c.valider
     FROM commentaire c
-             LEFT JOIN utilisateur u ON u.id_utilisateur = c.id_utilisateur;
+             LEFT JOIN utilisateur u ON u.id_utilisateur = c.id_utilisateur
+    ORDER BY CASE WHEN utilisateur_id IS NULL THEN c.date_publication ELSE c.date_ref END, utilisateur_id;
     '''
     mycursor.execute(sql)
     commentaires = mycursor.fetchall()
@@ -81,11 +82,17 @@ def admin_comment_add():
                                id_article=id_article, date_publication=date_publication)
 
     mycursor = get_db().cursor()
-    id_utilisateur = session['id_user']  # 1 admin
+    utilisateur_id = session['id_user']  # 1 admin
+    id_utilisateur = request.form.get('id_utilisateur', None)
     id_article = request.form.get('id_article', None)
     date_publication = request.form.get('date_publication', None)
     commentaire = request.form.get('commentaire', None)
-    sql = '''    requête admin_type_article_3   '''
+
+    sql = '''
+    INSERT INTO commentaire
+    VALUES (%s, %s, %s, NOW(), %s ,%s, true);
+    '''
+    mycursor.execute(sql, (id_article, id_utilisateur, utilisateur_id, date_publication, commentaire))
     get_db().commit()
     return redirect('/admin/article/commentaires?id_article=' + id_article)
 

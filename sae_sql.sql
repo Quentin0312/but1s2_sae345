@@ -106,6 +106,7 @@ CREATE TABLE commentaire
     id_utilisateur   INT,
     utilisateur_id   INT,
     date_publication DATETIME,
+    date_ref         DATETIME,
     commentaire      VARCHAR(255),
     valider          BOOLEAN,
     PRIMARY KEY (id_article, id_utilisateur, date_publication),
@@ -217,5 +218,5 @@ VALUES (3, 2, 3.5),
        (4, 2, 4.0);
 
 INSERT INTO commentaire
-VALUES (3, 2, null, '2024-12-02', 'pas mal', true),
-       (3, 2, null, '2024-12-04', 'pas trop mal', false)
+VALUES (3, 2, null, '2024-12-02', null, 'pas mal', true),
+       (3, 2, null, '2024-12-04', null, 'pas trop mal', false)
