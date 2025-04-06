@@ -6,14 +6,36 @@ from flask import Flask, request, render_template, redirect, abort, flash, sessi
 from connexion_db import get_db
 
 admin_dataviz = Blueprint('admin_dataviz', __name__,
-                        template_folder='templates')
+                          template_folder='templates')
+
 
 @admin_dataviz.route('/admin/dataviz/etat1')
 def show_type_article_stock():
     mycursor = get_db().cursor()
     sql = '''
-    
-           '''
+    SELECT tm.libelle_type                                   AS type_meuble,
+           COUNT(DISTINCT n.id_meuble, n.id_utilisateur)     AS nombre_notes,
+           ROUND(AVG(n.note), 1)                             AS note_moyenne,
+           COUNT(DISTINCT c.commentaire, c.date_publication) AS nombre_commentaires
+    FROM type_meuble tm
+             LEFT JOIN meuble m ON m.type_meuble_id = tm.id_type
+             LEFT JOIN note n ON n.id_meuble = m.id_article
+             LEFT JOIN commentaire c ON c.id_article = m.id_article
+    GROUP BY tm.libelle_type
+    ORDER BY tm.libelle_type;
+    '''
+    mycursor.execute(sql)
+    types_articles_nb = mycursor.fetchall()
+
+    sql = '''
+    SELECT SUM(stock) as total_article
+    FROM meuble;
+    '''
+    mycursor.execute(sql)
+    total_articles = mycursor.fetchone()
+    # sql = '''
+    #
+    #        '''
     # mycursor.execute(sql)
     # datas_show = mycursor.fetchall()
     # labels = [str(row['libelle']) for row in datas_show]
@@ -22,14 +44,14 @@ def show_type_article_stock():
     # sql = '''
     #         
     #        '''
-    datas_show=[]
-    labels=[]
-    values=[]
+    datas_show = []
+    labels = []
+    values = []
 
     return render_template('admin/dataviz/dataviz_etat_1.html'
                            , datas_show=datas_show
                            , labels=labels
-                           , values=values)
+                           , values=values, types_articles_nb=types_articles_nb, total_articles=total_articles)
 
 
 # sujet 3 : adresses
@@ -42,8 +64,8 @@ def show_dataviz_map():
     # mycursor.execute(sql)
     # adresses = mycursor.fetchall()
 
-    #exemples de tableau "résultat" de la requête
-    adresses =  [{'dep': '25', 'nombre': 1}, {'dep': '83', 'nombre': 1}, {'dep': '90', 'nombre': 3}]
+    # exemples de tableau "résultat" de la requête
+    adresses = [{'dep': '25', 'nombre': 1}, {'dep': '83', 'nombre': 1}, {'dep': '90', 'nombre': 3}]
 
     # recherche de la valeur maxi "nombre" dans les départements
     # maxAddress = 0
@@ -60,6 +82,4 @@ def show_dataviz_map():
 
     return render_template('admin/dataviz/dataviz_etat_map.html'
                            , adresses=adresses
-                          )
-
-
+                           )
