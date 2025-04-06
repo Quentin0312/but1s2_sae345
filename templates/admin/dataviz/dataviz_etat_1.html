@@ -75,6 +75,10 @@
     <div style="width: 900px; height: 500px; border: #0a53be 1px solid;">
         <canvas id="Chart1"></canvas>
     </div>
+    <h1>Nombre de commentaires par type d'article</h1>
+    <div style="width: 900px; height: 500px; border: #0a53be 1px solid;">
+        <canvas id="Chart2"></canvas>
+    </div>
     <script>
         var ctx1 = document.getElementById("Chart1").getContext("2d");
         var Chart1 = new Chart(ctx1, {
@@ -85,6 +89,28 @@
                     {
                         label: "Moyenne des notes",
                         data: {{ values | safe }},
+                        fill: false,
+                        backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
+                            "#faf24c"
+                            , "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
+                        borderColor: "rgb(75,192,192)",
+                        lineTension: 0.1
+                    }
+                ]
+            },
+            option: {
+                responsive: false
+            }
+        });
+        var ctx2 = document.getElementById("Chart2").getContext("2d");
+        var Chart2 = new Chart(ctx2, {
+            type: "bar",
+            data: {
+                labels: {{ labels2 | safe }},
+                datasets: [
+                    {
+                        label: "Nombre de commentaire",
+                        data: {{ values2 | safe }},
                         fill: false,
                         backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
                             "#faf24c"

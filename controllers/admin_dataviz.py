@@ -12,6 +12,7 @@ admin_dataviz = Blueprint('admin_dataviz', __name__,
 @admin_dataviz.route('/admin/dataviz/etat1')
 def show_type_article_stock():
     mycursor = get_db().cursor()
+    # Tableau
     sql = '''
     SELECT tm.libelle_type                                   AS type_meuble,
            COUNT(DISTINCT n.id_meuble, n.id_utilisateur)     AS nombre_notes,
@@ -27,6 +28,7 @@ def show_type_article_stock():
     mycursor.execute(sql)
     types_articles_nb = mycursor.fetchall()
 
+    # GRAPHIQUE 1
     sql = '''
     SELECT SUM(stock) as total_article
     FROM meuble;
@@ -42,21 +44,33 @@ def show_type_article_stock():
     ORDER BY tm.libelle_type;
            '''
     mycursor.execute(sql)
-    datas_show = mycursor.fetchall()
-    labels = [str(row['libelle_type']) for row in datas_show]
-    values = [int(row['note_moyenne']) for row in datas_show]
+    datas = mycursor.fetchall()
+    labels = [str(row['libelle_type']) for row in datas]
+    values = [int(row['note_moyenne']) for row in datas]
 
-    # sql = '''
-    #         
-    #        '''
-    datas_show = []
+    # GRAPHIQUE 2
+    sql = '''
+    SELECT tm.libelle_type, COUNT(c.commentaire) AS nb_commentaire
+    FROM type_meuble tm
+             LEFT JOIN meuble m ON tm.id_type = m.type_meuble_id
+             LEFT JOIN commentaire c ON c.id_article = m.id_article
+    GROUP BY tm.libelle_type
+    ORDER BY tm.libelle_type;
+    '''
+    mycursor.execute(sql)
+    datas = mycursor.fetchall()
+    labels2 = [str(row['libelle_type']) for row in datas]
+    values2 = [int(row['nb_commentaire']) for row in datas]
+    # datas_show = []
     # labels = []
     # values = []
 
     return render_template('admin/dataviz/dataviz_etat_1.html'
-                           , datas_show=datas_show
-                           , labels=labels
-                           , values=values, types_articles_nb=types_articles_nb, total_articles=total_articles)
+                           # , datas_show=datas_show
+                           , labels=labels, labels2=labels2
+                           , values=values, values2=values2
+                           , types_articles_nb=types_articles_nb
+                           , total_articles=total_articles)
 
 
 # sujet 3 : adresses
