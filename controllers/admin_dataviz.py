@@ -61,14 +61,25 @@ def show_type_article_stock():
     datas = mycursor.fetchall()
     labels2 = [str(row['libelle_type']) for row in datas]
     values2 = [int(row['nb_commentaire']) for row in datas]
-    # datas_show = []
-    # labels = []
-    # values = []
+
+    # GRAPHIQUE 3
+    sql = '''
+    SELECT tm.libelle_type, COUNT(note) AS nombre_notes
+    FROM type_meuble tm
+             LEFT JOIN meuble m ON tm.id_type = m.type_meuble_id
+             LEFT JOIN note n ON n.id_meuble = m.id_article
+    GROUP BY tm.libelle_type
+    ORDER BY tm.libelle_type;
+    '''
+    mycursor.execute(sql)
+    datas = mycursor.fetchall()
+    labels3 = [str(row['libelle_type']) for row in datas]
+    values3 = [int(row['nombre_notes']) for row in datas]
 
     return render_template('admin/dataviz/dataviz_etat_1.html'
                            # , datas_show=datas_show
-                           , labels=labels, labels2=labels2
-                           , values=values, values2=values2
+                           , labels=labels, labels2=labels2, labels3=labels3
+                           , values=values, values2=values2, values3=values3
                            , types_articles_nb=types_articles_nb
                            , total_articles=total_articles)
 
