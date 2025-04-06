@@ -33,20 +33,25 @@ def show_type_article_stock():
     '''
     mycursor.execute(sql)
     total_articles = mycursor.fetchone()
-    # sql = '''
-    #
-    #        '''
-    # mycursor.execute(sql)
-    # datas_show = mycursor.fetchall()
-    # labels = [str(row['libelle']) for row in datas_show]
-    # values = [int(row['nbr_articles']) for row in datas_show]
+    sql = '''
+    SELECT tm.libelle_type, COALESCE(ROUND(AVG(note), 1),0) AS note_moyenne
+    FROM type_meuble tm
+             LEFT JOIN meuble m ON tm.id_type = m.type_meuble_id
+             LEFT JOIN note n ON n.id_meuble = m.id_article
+    GROUP BY tm.libelle_type
+    ORDER BY tm.libelle_type;
+           '''
+    mycursor.execute(sql)
+    datas_show = mycursor.fetchall()
+    labels = [str(row['libelle_type']) for row in datas_show]
+    values = [int(row['note_moyenne']) for row in datas_show]
 
     # sql = '''
     #         
     #        '''
     datas_show = []
-    labels = []
-    values = []
+    # labels = []
+    # values = []
 
     return render_template('admin/dataviz/dataviz_etat_1.html'
                            , datas_show=datas_show
