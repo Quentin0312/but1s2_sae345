@@ -219,4 +219,5 @@ VALUES (3, 2, 3.5),
 
 INSERT INTO commentaire
 VALUES (3, 2, null, '2024-12-02', null, 'pas mal', true),
+       (3, 2, 1, '2025-01-02', '2024-12-02', 'ma rép', true),
        (3, 2, null, '2024-12-04', null, 'pas trop mal', false)

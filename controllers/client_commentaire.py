@@ -34,10 +34,11 @@ def client_article_details():
     # TODO : Vérfiier l'affichage des réponses de l'administrateur !
     # TODO : C'est pas bon donc fix => doit s'afficher au desssous
     sql = '''
-    SELECT nom, commentaire.id_utilisateur, commentaire, valider, id_article, date_publication
-    FROM commentaire
-             LEFT JOIN utilisateur ON commentaire.id_utilisateur = utilisateur.id_utilisateur
-    WHERE id_article = %s;
+SELECT nom, commentaire, c.id_article, c.id_utilisateur, c.date_publication, c.utilisateur_id, c.valider
+FROM commentaire c
+         LEFT JOIN utilisateur u ON u.id_utilisateur = c.id_utilisateur
+WHERE c.id_article = %s
+ORDER BY IF(utilisateur_id IS NULL, c.date_publication, c.date_ref), utilisateur_id;
     '''
     mycursor.execute(sql, id_article)
     commentaires = mycursor.fetchall()
