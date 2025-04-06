@@ -38,11 +38,25 @@ GROUP BY nom;
         dataC2 = mycursor.fetchall()
         labels5 = [str(row['nom']) for row in dataC2]
         values5 = [float(row['nb']) for row in dataC2]
+
+        sql = '''
+SELECT nom, COUNT(note) as nb
+FROM note
+         JOIN meuble m ON m.id_article = note.id_meuble
+WHERE m.type_meuble_id = %s
+GROUP BY nom;
+            '''
+        mycursor.execute(sql, (categorie,))
+        dataC3 = mycursor.fetchall()
+        labels6 = [str(row['nom']) for row in dataC3]
+        values6 = [float(row['nb']) for row in dataC3]
     else:
         labels4 = []
         values4 = []
         labels5 = []
         values5 = []
+        labels6 = []
+        values6 = []
 
     # Tableau
     # sql = '''
@@ -119,8 +133,8 @@ GROUP BY nom;
     return render_template('admin/dataviz/dataviz_etat_1.html'
                            # , datas_show=datas_show
                            , categories=categories
-                           , labels=labels, labels2=labels2, labels3=labels3, labels4=labels4, labels5=labels5
-                           , values=values, values2=values2, values3=values3, values4=values4, values5=values5
+                           , labels=labels, labels2=labels2, labels3=labels3, labels4=labels4, labels5=labels5, labels6=labels6
+                           , values=values, values2=values2, values3=values3, values4=values4, values5=values5, values6=values6
                            # , types_articles_nb=types_articles_nb
                            , total_articles=total_articles
                            )
