@@ -34,24 +34,31 @@
         </tr>
         </thead>
         <tbody>
-        {% if types_articles_nb | length >= 1 %}
-            {% for ligne in types_articles_nb %}
+        {% if labels | length >= 1 %}
+            {% for n in range(labels | length) %}
                 <tr>
-                    <td>{{ ligne.type_meuble }}</td>
-                    <td>{{ ligne.nombre_notes }}</td>
-                    {% if ligne.note_moyenne %}
-                        <td>{{ ligne.note_moyenne }}</td>
+                    <td>{{ labels[n] }}</td>
+                    <td>{{ values3[n] }}</td>
+                    {% if values[n] != 0 %}
+                        <td>{{ values[n] }}</td>
                     {% else %}
                         <td></td>
                     {% endif %}
-                    <td>{{ ligne.nombre_commentaires }}</td>
-                    {#                   <td><span style="color: red">#}
-                    {#                       {% if ligne.nbr_articles_stock is not none %}  {{ ligne.nbr_articles }} {% else %}#}
-                    {#                       pas d'article {% endif %}#}
-                    {#                   </span></td>#}
-
+                    <td>{{ values2[n] }}</td>
                 </tr>
             {% endfor %}
+{#            {% for ligne in types_articles_nb %}#}
+{#                <tr>#}
+{#                    <td>{{ ligne.type_meuble }}</td>#}
+{#                    <td>{{ ligne.nombre_notes }}</td>#}
+{#                    {% if ligne.note_moyenne %}#}
+{#                        <td>{{ ligne.note_moyenne }}</td>#}
+{#                    {% else %}#}
+{#                        <td></td>#}
+{#                    {% endif %}#}
+{#                    <td>{{ ligne.nombre_commentaires }}</td>#}
+{#                </tr>#}
+{#            {% endfor %}#}
         {% else %}
             pas de stock
         {% endif %}

@@ -221,3 +221,137 @@ INSERT INTO commentaire
 VALUES (3, 2, null, '2024-12-02', null, 'pas mal', true),
        (3, 2, 1, '2025-01-02', '2024-12-02', 'ma rép', true),
        (3, 2, null, '2024-12-04', null, 'pas trop mal', false)
+
+--
+
+-- Ajout de nouveaux utilisateurs
+INSERT INTO utilisateur(id_utilisateur, login, email, password, role, nom, est_actif)
+VALUES
+(4, 'user1', 'user1@client.com', 'password_hash_1', 'ROLE_client', 'User One', '1'),
+(5, 'user2', 'user2@client.com', 'password_hash_2', 'ROLE_client', 'User Two', '1'),
+(6, 'user3', 'user3@client.com', 'password_hash_3', 'ROLE_client', 'User Three', '1');
+
+-- Ajout de commandes pour les nouveaux utilisateurs
+INSERT INTO commande (id_commande, date_achat, utilisateur_id, etat_id, prix_total_commande)
+VALUES
+(4, '2025-03-10 10:30:00', 4, 1, 249.99),
+(5, '2025-03-12 12:00:00', 5, 2, 599.98),
+(6, '2025-03-15 14:30:00', 6, 3, 399.99);
+
+-- Ajout des lignes de commande associées
+INSERT INTO ligne_commande (commande_id, article_id, prix, quantite)
+VALUES
+(4, 3, 89.99, 2),  -- User1 achète 2 meubles de type 'table' (id_article 3)
+(5, 5, 289.00, 1),  -- User2 achète 1 meuble 'lit' (id_article 5)
+(6, 7, 249.99, 1);  -- User3 achète 1 meuble 'table' (id_article 7)
+
+-- Ajout de notes pour les utilisateurs
+INSERT INTO note (id_meuble, id_utilisateur, note)
+VALUES
+(3, 4, 4.0),  -- User1 note le produit 'LANEBERG' (id_article 3)
+(5, 5, 3.5),  -- User2 note le produit 'MALM' (id_article 5)
+(7, 6, 4.5);  -- User3 note le produit 'STRANDTORP' (id_article 7)
+
+-- Ajout de commentaires pour les utilisateurs
+-- User1 a acheté le meuble 'LANEBERG' (id_article 3)
+INSERT INTO commentaire (id_article, id_utilisateur, utilisateur_id, date_publication, commentaire, valider)
+VALUES
+(3, 4, NULL, '2025-03-11', 'Très satisfait, bonne qualité !', true),
+(3, 4, 1, '2025-03-12', 'Bon rapport qualité/prix', true),
+(3, 4, NULL, '2025-03-13', 'Recommandé pour les petits espaces', false);
+
+-- User2 a acheté le meuble 'MALM' (id_article 5)
+INSERT INTO commentaire (id_article, id_utilisateur, utilisateur_id, date_publication, commentaire, valider)
+VALUES
+(5, 5, NULL, '2025-03-13', 'Solide et spacieux, parfait pour ma chambre', true),
+(5, 5, NULL, '2025-03-14', 'Un peu cher, mais de bonne qualité', true);
+
+-- User3 a acheté le meuble 'STRANDTORP' (id_article 7)
+INSERT INTO commentaire (id_article, id_utilisateur, utilisateur_id, date_publication, commentaire, valider)
+VALUES
+(7, 6, NULL, '2025-03-16', 'Super meuble, très design', true),
+(7, 6, NULL, '2025-03-17', 'Très satisfait, montage facile', false),
+(7, 6, NULL, '2025-03-18', 'Bon produit mais un peu cher', true);
+
+-- Ajout de nouveaux utilisateurs
+INSERT INTO utilisateur(id_utilisateur, login, email, password, role, nom, est_actif)
+VALUES
+(7, 'user4', 'user4@client.com', 'password_hash_4', 'ROLE_client', 'User Four', '1'),
+(8, 'user5', 'user5@client.com', 'password_hash_5', 'ROLE_client', 'User Five', '1'),
+(9, 'user6', 'user6@client.com', 'password_hash_6', 'ROLE_client', 'User Six', '1'),
+(10, 'user7', 'user7@client.com', 'password_hash_7', 'ROLE_client', 'User Seven', '1'),
+(11, 'user8', 'user8@client.com', 'password_hash_8', 'ROLE_client', 'User Eight', '1'),
+(12, 'user9', 'user9@client.com', 'password_hash_9', 'ROLE_client', 'User Nine', '1');
+
+-- Ajout de commandes pour les nouveaux utilisateurs
+INSERT INTO commande (id_commande, date_achat, utilisateur_id, etat_id, prix_total_commande)
+VALUES
+(7, '2025-03-20 10:30:00', 7, 1, 179.99),
+(8, '2025-03-22 12:00:00', 8, 2, 799.98),
+(9, '2025-03-25 14:30:00', 9, 3, 499.99),
+(10, '2025-03-30 15:00:00', 10, 1, 249.99),
+(11, '2025-04-02 16:00:00', 11, 2, 399.99),
+(12, '2025-04-05 17:30:00', 12, 3, 299.99);
+
+-- Ajout des lignes de commande associées
+INSERT INTO ligne_commande (commande_id, article_id, prix, quantite)
+VALUES
+(7, 3, 89.99, 2),  -- User4 achète 2 meubles de type 'table' (id_article 3)
+(8, 5, 289.00, 2),  -- User5 achète 2 meubles 'lit' (id_article 5)
+(9, 7, 249.99, 2),  -- User6 achète 2 meubles 'table' (id_article 7)
+(10, 9, 129.99, 2),  -- User7 achète 2 meubles 'armoire' (id_article 9)
+(11, 11, 179.00, 3), -- User8 achète 3 meubles 'armoire' (id_article 11)
+(12, 2, 20.99, 8);   -- User9 achète 8 meubles 'chaise' (id_article 2)
+
+-- Ajout de notes pour les utilisateurs
+INSERT INTO note (id_meuble, id_utilisateur, note)
+VALUES
+(3, 7, 4.0),  -- User4 note le produit 'LANEBERG' (id_article 3)
+(5, 8, 3.5),  -- User5 note le produit 'MALM' (id_article 5)
+(7, 9, 4.5),  -- User6 note le produit 'STRANDTORP' (id_article 7)
+(9, 10, 2.5), -- User7 note le produit 'KALLAX' (id_article 9)
+(11, 11, 3.0), -- User8 note le produit 'BRIMNES' (id_article 11)
+(2, 12, 4.0);  -- User9 note le produit 'LISABO' (id_article 2)
+
+-- Ajout de commentaires pour les utilisateurs
+-- User4 a acheté le meuble 'LANEBERG' (id_article 3)
+INSERT INTO commentaire (id_article, id_utilisateur, utilisateur_id, date_publication, commentaire, valider)
+VALUES
+(3, 7, NULL, '2025-03-21', 'Très satisfait du produit !', true),
+(3, 7, 1, '2025-03-22', 'Produit de bonne qualité, livraison rapide', true),
+(3, 7, NULL, '2025-03-23', 'Je recommande, très confortable', false);
+
+-- User5 a acheté le meuble 'MALM' (id_article 5)
+INSERT INTO commentaire (id_article, id_utilisateur, utilisateur_id, date_publication, commentaire, valider)
+VALUES
+(5, 8, NULL, '2025-03-23', 'Très beau meuble, facile à monter', true),
+(5, 8, 1, '2025-03-24', 'Un peu cher mais confortable', true),
+(5, 8, NULL, '2025-03-25', 'Solide mais pas assez spacieux pour moi', false);
+
+-- User6 a acheté le meuble 'STRANDTORP' (id_article 7)
+INSERT INTO commentaire (id_article, id_utilisateur, utilisateur_id, date_publication, commentaire, valider)
+VALUES
+(7, 9, NULL, '2025-03-26', 'Produit de qualité, livraison rapide', true),
+(7, 9, NULL, '2025-03-27', 'Montage simple, design moderne', false),
+(7, 9, NULL, '2025-03-28', 'Un peu cher mais très solide', true);
+
+-- User7 a acheté le meuble 'KALLAX' (id_article 9)
+INSERT INTO commentaire (id_article, id_utilisateur, utilisateur_id, date_publication, commentaire, valider)
+VALUES
+(9, 10, NULL, '2025-03-31', 'Bon produit pour le prix', true),
+(9, 10, NULL, '2025-04-01', 'Un peu plus cher que prévu, mais solide', false),
+(9, 10, NULL, '2025-04-02', 'J\'aime beaucoup le design', true);
+
+-- User8 a acheté le meuble 'BRIMNES' (id_article 11)
+INSERT INTO commentaire (id_article, id_utilisateur, utilisateur_id, date_publication, commentaire, valider)
+VALUES
+(11, 11, NULL, '2025-04-03', 'Beau produit mais un peu compliqué à monter', true),
+(11, 11, 1, '2025-04-04', 'Très content de mon achat', true),
+(11, 11, NULL, '2025-04-05', 'Bonne qualité, un peu cher', false);
+
+-- User9 a acheté le meuble 'LISABO' (id_article 2)
+INSERT INTO commentaire (id_article, id_utilisateur, utilisateur_id, date_publication, commentaire, valider)
+VALUES
+(2, 12, NULL, '2025-04-06', 'Très bon rapport qualité/prix', true),
+(2, 12, NULL, '2025-04-07', 'Assez confortable, mais manque de couleur', true),
+(2, 12, NULL, '2025-04-08', 'Je ne suis pas satisfait du design', false);
