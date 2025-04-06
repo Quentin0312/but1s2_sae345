@@ -47,18 +47,18 @@
                     <td>{{ values2[n] }}</td>
                 </tr>
             {% endfor %}
-{#            {% for ligne in types_articles_nb %}#}
-{#                <tr>#}
-{#                    <td>{{ ligne.type_meuble }}</td>#}
-{#                    <td>{{ ligne.nombre_notes }}</td>#}
-{#                    {% if ligne.note_moyenne %}#}
-{#                        <td>{{ ligne.note_moyenne }}</td>#}
-{#                    {% else %}#}
-{#                        <td></td>#}
-{#                    {% endif %}#}
-{#                    <td>{{ ligne.nombre_commentaires }}</td>#}
-{#                </tr>#}
-{#            {% endfor %}#}
+            {#            {% for ligne in types_articles_nb %}#}
+            {#                <tr>#}
+            {#                    <td>{{ ligne.type_meuble }}</td>#}
+            {#                    <td>{{ ligne.nombre_notes }}</td>#}
+            {#                    {% if ligne.note_moyenne %}#}
+            {#                        <td>{{ ligne.note_moyenne }}</td>#}
+            {#                    {% else %}#}
+            {#                        <td></td>#}
+            {#                    {% endif %}#}
+            {#                    <td>{{ ligne.nombre_commentaires }}</td>#}
+            {#                </tr>#}
+            {#            {% endfor %}#}
         {% else %}
             pas de stock
         {% endif %}
@@ -98,7 +98,29 @@
             </div>
         </div>
     </div>
+
+    <form id="form" action="/admin/dataviz/etat1">
+        <label for="categorie">Type de meubles :</label>
+        <select id="categorie" name="categorie">
+            <option value="-1">Veullez selectionner une catégorie</option>
+            {% for cat in categories %}
+                <option value="{{ cat.id_type }}">{{ cat.libelle_type }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    {% if values4 | length >= 1 %}
+        <div style="width: 450px; height: 255px; border: #0a53be 1px solid;">
+            <canvas id="Chart4"></canvas>
+        </div>
+    {% endif %}
     <script>
+        var select = document.getElementById("categorie");
+        select.onchange = (e) => {
+            let value = e.target.value;
+            if (value == -1) return;
+            document.getElementById("form").submit();
+        }
+
         var ctx1 = document.getElementById("Chart1").getContext("2d");
         var Chart1 = new Chart(ctx1, {
             type: "bar",
@@ -163,11 +185,35 @@
                 }
             }
         });
+        {#if (document.getElementById("Chart4")) #}
+        var ctx4 = document.getElementById("Chart4").getContext("2d");
+        var Chart4 = new Chart(ctx4, {
+            type: "bar",
+            data: {
+                labels: {{ labels4 | safe }},
+                datasets: [
+                    {
+                        label: "Moyenne des notes",
+                        data: {{ values4 | safe }},
+                        fill: false,
+                        backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
+                            "#faf24c"
+                            , "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
+                        borderColor: "rgb(75,192,192)",
+                        lineTension: 0.1
+                    }
+                ]
+            },
+            option: {
+                responsive: false
+            }
+        });
+
     </script>
 
-{#    <a href="https://www.youtube.com/watch?v=TcwYXIIM-fs" target="_blank">dataviz, c'est quoi en 1 mn ? (juste la#}
-{#        première minute)</a>#}
-{#    <br>#}
-{#    <a href="https://www.youtube.com/watch?v=bZDnSUjfMt8" target="_blank">dataviz, c'est quoi ? (juste la première#}
-{#        minute)</a>#}
+    {#    <a href="https://www.youtube.com/watch?v=TcwYXIIM-fs" target="_blank">dataviz, c'est quoi en 1 mn ? (juste la#}
+    {#        première minute)</a>#}
+    {#    <br>#}
+    {#    <a href="https://www.youtube.com/watch?v=bZDnSUjfMt8" target="_blank">dataviz, c'est quoi ? (juste la première#}
+    {#        minute)</a>#}
 {% endblock %}

@@ -12,6 +12,38 @@ admin_dataviz = Blueprint('admin_dataviz', __name__,
 @admin_dataviz.route('/admin/dataviz/etat1')
 def show_type_article_stock():
     mycursor = get_db().cursor()
+    categorie = request.args.get('categorie', None)
+
+    if categorie:
+        sql = '''
+        SELECT nom, ROUND(AVG(note), 1) as moy
+        FROM note
+                 JOIN meuble m ON m.id_article = note.id_meuble
+        WHERE m.type_meuble_id = %s
+        GROUP BY nom;
+        '''
+        mycursor.execute(sql, (categorie,))
+        dataC1 = mycursor.fetchall()
+        labels4 = [str(row['nom']) for row in dataC1]
+        values4 = [float(row['moy']) for row in dataC1]
+
+        sql = '''
+SELECT nom, COUNT(commentaire) as nb
+FROM commentaire
+         JOIN meuble m ON m.id_article = commentaire.id_article
+WHERE m.type_meuble_id = %s
+GROUP BY nom;
+        '''
+        mycursor.execute(sql, (categorie,))
+        dataC2 = mycursor.fetchall()
+        labels5 = [str(row['nom']) for row in dataC2]
+        values5 = [float(row['nb']) for row in dataC2]
+    else:
+        labels4 = []
+        values4 = []
+        labels5 = []
+        values5 = []
+
     # Tableau
     # sql = '''
     # SELECT tm.libelle_type                                   AS type_meuble,
@@ -77,12 +109,21 @@ def show_type_article_stock():
     labels3 = [str(row['libelle_type']) for row in datas]
     values3 = [int(row['nombre_notes']) for row in datas]
 
+    # Liste des catégories
+    sql = '''
+    SELECT id_type, libelle_type FROM type_meuble;
+    '''
+    mycursor.execute(sql)
+    categories = mycursor.fetchall()
+
     return render_template('admin/dataviz/dataviz_etat_1.html'
                            # , datas_show=datas_show
-                           , labels=labels, labels2=labels2, labels3=labels3
-                           , values=values, values2=values2, values3=values3
+                           , categories=categories
+                           , labels=labels, labels2=labels2, labels3=labels3, labels4=labels4, labels5=labels5
+                           , values=values, values2=values2, values3=values3, values4=values4, values5=values5
                            # , types_articles_nb=types_articles_nb
-                           , total_articles=total_articles)
+                           , total_articles=total_articles
+                           )
 
 
 # sujet 3 : adresses
