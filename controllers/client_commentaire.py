@@ -120,7 +120,7 @@ def client_comment_add():
     print(tuple_insert)
     sql = '''
     INSERT INTO commentaire
-    VALUES (%s, %s, null, NOW(), %s, 0);
+    VALUES (%s, %s, null, NOW(), null, %s, 0);
     '''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
@@ -152,9 +152,11 @@ def client_note_add():
     id_client = session['id_user']
     note = request.form.get('note', None)
     id_article = request.form.get('id_article', None)
-    tuple_insert = (note, id_client, id_article)
+    tuple_insert = (id_article, id_client, note)
     print(tuple_insert)
-    sql = '''   '''
+    sql = '''
+    INSERT INTO note VALUES (%s, %s, %s);
+    '''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
     return redirect('/client/article/details?id_article=' + id_article)

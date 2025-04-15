@@ -162,7 +162,7 @@
                             {#                        {{ commentaire.__dict__ }}#}
                             {#                        </td>#}
                             <td>
-                                {% if commentaire.id_utilisateur == session['id_user'] %}
+                                {% if commentaire.id_utilisateur == session['id_user'] and not commentaire.utilisateur_id %}
                                     <form action="/client/commentaire/delete" style="display: inline-block;"
                                           method="post">
                                         <input type="hidden" name="id_article" value="{{ commentaire.id_article }}">
